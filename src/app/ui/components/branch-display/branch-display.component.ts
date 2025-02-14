@@ -7,7 +7,15 @@ import {
 	moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	EventEmitter,
+	Input,
+	OnInit,
+	Output,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TreeNode } from '@shared/interfaces/tree-node.model';
 import { TreeService } from '@shared/services/tree/tree.service';
@@ -18,6 +26,7 @@ import { TreeService } from '@shared/services/tree/tree.service';
 	imports: [CommonModule, FormsModule, DragDropModule],
 	templateUrl: './branch-display.component.html',
 	styleUrls: ['./branch-display.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TreeComponent implements OnInit {
 	@Input() node!: TreeNode;
@@ -30,7 +39,10 @@ export class TreeComponent implements OnInit {
 	dropListId = `drop-list-${Math.random().toString(36).substring(2)}`;
 	private hasBeenInitialized = false;
 
-	constructor(private treeService: TreeService) {}
+	constructor(
+		private treeService: TreeService,
+		private changeDetectionRef: ChangeDetectorRef
+	) {}
 
 	ngOnInit() {
 		if (!this.hasBeenInitialized) {

@@ -1,6 +1,11 @@
 // app-tree.component.ts (Parent component)
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	OnInit,
+} from '@angular/core';
 import { TreeComponent } from '../../components/branch-display/branch-display.component';
 import { TreeNode } from '@shared/interfaces/tree-node.model';
 import { TreeService } from '@shared/services/tree/tree.service';
@@ -12,11 +17,15 @@ import { mockTreeData } from '../../components/branch-display/mock-data';
 	imports: [TreeComponent, CommonModule],
 	templateUrl: './branch-display-container.component.html',
 	styleUrls: ['./branch-display-container.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppTreeContainer implements OnInit {
 	treeData: TreeNode = mockTreeData;
 	dropListIds: string[] = [];
-	constructor(private treeService: TreeService) {}
+	constructor(
+		private treeService: TreeService,
+		private changeDetectionRef: ChangeDetectorRef
+	) {}
 
 	ngOnInit() {
 		// Register all nodes in the tree with the service
