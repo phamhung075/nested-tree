@@ -67,7 +67,7 @@
 			</button>
 
 			<!-- Drag Handle -->
-			<div class="text-gray-600 select-none cursor-move px-1" cdkDragHandle title="Drag to reorder">☰</div>
+			<div *ngIf="!isRoot" class="text-gray-600 select-none cursor-move px-1" cdkDragHandle title="Drag to reorder">☰</div>
 		</div>
 	</div>
 

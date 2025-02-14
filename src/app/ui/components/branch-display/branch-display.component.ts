@@ -1,15 +1,14 @@
 // tree.component.ts
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import {
 	CdkDrag,
 	CdkDragDrop,
 	CdkDropList,
 	DragDropModule,
 	moveItemInArray,
-	transferArrayItem,
 } from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TreeNode } from '@shared/interfaces/tree-node.model';
 import { TreeService } from '@shared/services/tree/tree.service';
 
