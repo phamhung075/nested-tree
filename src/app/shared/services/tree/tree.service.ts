@@ -67,7 +67,7 @@ export class TreeService {
 		let currentNode = this.findNodeById(targetId);
 		let depth = 0;
 
-		while (currentNode && depth < 100) {
+		while (currentNode && depth < 1000) {
 			console.log('Traversing up the tree:', {
 				currentNodeId: currentNode.id,
 				currentNodeValue: currentNode.value,
