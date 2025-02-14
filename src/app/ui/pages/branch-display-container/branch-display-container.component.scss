@@ -1,0 +1,8 @@
+.drop:after {
+	content: '▼';
+	margin-left: 8px;
+}
+
+input:checked + .drop:after {
+	content: '▲';
+}

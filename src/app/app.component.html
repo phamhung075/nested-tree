@@ -1,1 +1,48 @@
-<router-outlet></router-outlet>
+<div class="container mx-auto">
+	<div class="w-full p-6 bg-white shadow-lg rounded-lg border border-gray-200">
+		<h2 class="text-xl font-semibold text-gray-800 mb-4">🛠 How to Use Drag & Drop</h2>
+
+		<ul class="space-y-3 text-gray-700">
+			<li class="flex items-start">
+				<span class="text-blue-500 text-lg font-bold">1.</span>
+				<p class="ml-2">
+					<strong>Moving Nodes:</strong> Drag and drop a node to reposition it within the same parent or move it under a different parent.
+				</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-blue-500 text-lg font-bold">2.</span>
+				<p class="ml-2"><strong>Reordering:</strong> Drag a node up or down within the same level to rearrange the order.</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-red-500 text-lg font-bold">🚫</span>
+				<p class="ml-2"><strong>Cannot drop a node onto its own parent</strong> to prevent circular structures.</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-red-500 text-lg font-bold">🚫</span>
+				<p class="ml-2">
+					<strong>Cannot drop a node onto a parent with no children.</strong> Use the "Add" button to create an initial child first.
+				</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-green-500 text-lg font-bold">✅</span>
+				<p class="ml-2"><strong>Can drop a node inside another node</strong> if the target node has at least one child.</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-yellow-500 text-lg font-bold">🔼</span>
+				<p class="ml-2">
+					<strong>Move Up a Level:</strong> If you need to move a node higher in the hierarchy, use the "Move Up Level" button instead.
+				</p>
+			</li>
+		</ul>
+
+		<div class="mt-4 p-3 bg-gray-100 border-l-4 border-blue-400 text-gray-800 rounded">
+			<p><strong>Tip:</strong> Dragging rules ensure a structured tree and prevent misplaced nodes.</p>
+		</div>
+	</div>
+	<router-outlet></router-outlet>
+</div>
