@@ -1,0 +1,100 @@
+<!-- Tree node template -->
+<div class="relative pl-8 mt-1 ml-6" [class.ml-0]="isRoot" [class.pl-3]="isRoot">
+	<!-- Node Content -->
+	<div
+		class="flex items-center gap-2 relative cursor-move bg-white rounded p-1.5 transition-all duration-200 w-fit"
+		cdkDrag
+		[cdkDragData]="node"
+		(cdkDragStarted)="onDragStarted()"
+		(cdkDragEnded)="onDragEnded()"
+		[ngClass]="{
+			'bg-red-50 border-4 border-red-500 p-2.5 rounded-lg': isRoot,
+			'bg-gray-50 border-3 border-blue-200 rounded': node.children.length > 0,
+			'bg-green-50 border border-green-200 rounded': node.children.length === 0
+		}"
+	>
+		<!-- Vertical and Horizontal Connector Lines -->
+		<div *ngIf="!isRoot" class="absolute -left-8 top-1/2 flex items-center">
+			<div class="absolute -left-6 w-14 h-0.5 bg-gray-300"></div>
+		</div>
+
+		<!-- Node Icon -->
+		<div *ngIf="!isRoot" class="w-5 text-center text-base">
+			<span class="text-yellow-500">{{ node.children.length > 0 ? '📁' : '📄' }}</span>
+		</div>
+
+		<!-- Root Icon -->
+		<div *ngIf="isRoot" class="text-xl mr-2 text-yellow-500">📁</div>
+
+		<!-- Input Field -->
+		<input
+			[(ngModel)]="node.value"
+			[placeholder]="isRoot ? 'Root Node' : 'Enter value'"
+			class="px-1.5 w-[200px] min-w-[150px] max-w-[300px]"
+			[ngClass]="{ 'font-bold text-base text-blue-700 bg-white': isRoot }"
+		/>
+
+		<!-- Action Buttons -->
+		<div class="flex gap-1.5 ml-2">
+			<!-- Delete Button -->
+			<button
+				*ngIf="!isRoot"
+				(click)="deleteNode()"
+				class="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-sm hover:bg-red-600"
+				title="Delete Node"
+			>
+				×
+			</button>
+
+			<!-- Add Child Button -->
+			<button
+				(click)="addChild()"
+				class="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-sm hover:bg-green-600"
+				[ngClass]="{ 'bg-blue-500 hover:bg-blue-600': isRoot }"
+				title="Add Child Node"
+			>
+				+
+			</button>
+
+			<!-- Move Up Button -->
+			<button
+				*ngIf="!isRoot"
+				(click)="moveUpLevel()"
+				class="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm hover:bg-blue-600"
+				title="Move to upper level"
+			>
+				↑
+			</button>
+
+			<!-- Drag Handle -->
+			<div class="text-gray-600 select-none cursor-move px-1" cdkDragHandle title="Drag to reorder">☰</div>
+		</div>
+	</div>
+
+	<!-- Children Container -->
+	<div
+		*ngIf="node.children.length > 0"
+		class="relative ml-8"
+		cdkDropList
+		[id]="dropListId"
+		[cdkDropListData]="node.children"
+		[cdkDropListConnectedTo]="dropListIds"
+		(cdkDropListDropped)="drop($event)"
+		[cdkDropListEnterPredicate]="canDrop"
+	>
+		<!-- Vertical Line for Children -->
+		<div class="absolute left-0 top-0 w-0.5 h-full bg-gray-300" [ngClass]="{ 'bg-blue-500': isRoot }"></div>
+
+		<!-- Child Nodes -->
+		<app-tree
+			*ngFor="let child of node.children; let last = last"
+			[node]="child"
+			[isLastChild]="last"
+			[isRoot]="false"
+			[dropListIds]="dropListIds"
+			(onDelete)="removeChild($event)"
+			(registerDropList)="onRegisterDropList($event)"
+		>
+		</app-tree>
+	</div>
+</div>
