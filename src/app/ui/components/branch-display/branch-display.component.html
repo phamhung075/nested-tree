@@ -4,6 +4,7 @@
 	<div
 		class="flex items-center gap-2 relative cursor-move bg-white rounded p-1.5 transition-all duration-200 w-fit"
 		cdkDrag
+		[cdkDragDisabled]="isRoot"
 		[cdkDragData]="node"
 		(cdkDragStarted)="onDragStarted()"
 		(cdkDragEnded)="onDragEnded()"
@@ -67,7 +68,14 @@
 			</button>
 
 			<!-- Drag Handle -->
-			<div *ngIf="!isRoot" class="text-gray-600 select-none cursor-move px-1" cdkDragHandle title="Drag to reorder">☰</div>
+			<button
+				*ngIf="!isRoot"
+				class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-sm hover:bg-gray-300 cursor-move"
+				cdkDragHandle
+				title="Drag to reorder"
+			>
+				☰
+			</button>
 		</div>
 	</div>
 
