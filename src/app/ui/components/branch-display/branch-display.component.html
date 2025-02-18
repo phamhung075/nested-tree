@@ -23,7 +23,7 @@
 		<button
 			*ngIf="node.children.length > 0"
 			(click)="toggleExpand()"
-			class="absolute -left-3 w-4 h-4 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm hover:bg-gray-300"
+			class="absolute -left-2.5 w-4 h-4 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm hover:bg-gray-300"
 			title="{{ isExpanded ? 'Collapse' : 'Expand' }}"
 		>
 			{{ isExpanded ? '▼' : '▶' }}
@@ -32,7 +32,7 @@
 		<!-- Expand/Collapse Button - Add this new button -->
 		<div
 			*ngIf="node.children.length > 0 && !isExpanded"
-			class="absolute -right-3 w-4 h-4 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm hover:bg-gray-300"
+			class="absolute -right-2.5 w-4 h-4 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm hover:bg-gray-300"
 		>
 			{{ node.children.length }}
 		</div>
