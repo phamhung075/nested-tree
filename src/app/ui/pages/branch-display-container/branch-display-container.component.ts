@@ -43,10 +43,4 @@ export class AppTreeContainer implements OnInit {
 			this.registerNodesRecursively(child, node.id);
 		});
 	}
-
-	onRegisterDropList(id: string) {
-		if (!this.dropListIds.includes(id)) {
-			this.dropListIds = [...this.dropListIds, id];
-		}
-	}
 }
