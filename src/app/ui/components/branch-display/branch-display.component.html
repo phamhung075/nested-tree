@@ -73,7 +73,7 @@
 
 	<!-- Children Container -->
 	<div
-		*ngIf="node.children.length > 0"
+		*ngIf="node.children.length > 0 || !isRoot"
 		class="relative ml-8"
 		cdkDropList
 		[id]="dropListId"

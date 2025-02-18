@@ -1,0 +1,1834 @@
+Project Directory: app
+Total Files Analyzed: 22
+Total Size: 0.05 MB
+Date: 2025-02-18T10:17:40.290Z
+
+Token counts and costs by model:
+   GPT-3.5: 12.6K tokens → $0.0190
+   GPT-4:   12.6K tokens → $0.3792
+   Claude:  12.6K tokens → $0.1896
+   LLaMA 2: 13.9K tokens → $0.0278
+
+Directory structure:
+├── shared/
+│   ├── interfaces/
+│   │   └── tree-node.model.ts
+│   └── services/
+│       ├── mook/
+│       │   ├── mook.service.spec.ts
+│       │   └── mook.service.ts
+│       ├── nested-set/
+│       │   ├── nested-set.service.spec.ts
+│       │   └── nested-set.service.ts
+│       ├── nested-set-tree-converter/
+│       │   ├── nested-set-tree-converter.service.spec.ts
+│       │   └── nested-set-tree-converter.service.ts
+│       └── tree/
+│           ├── tree.service.spec.ts
+│           └── tree.service.ts
+├── ui/
+│   ├── components/
+│   │   └── branch-display/
+│   │       ├── mock-data/
+│   │       │   └── index.ts
+│   │       ├── branch-display.component.html
+│   │       ├── branch-display.component.scss
+│   │       └── branch-display.component.ts
+│   └── pages/
+│       └── branch-display-container/
+│           ├── branch-display-container.component.html
+│           ├── branch-display-container.component.scss
+│           └── branch-display-container.component.ts
+├── app.component.html
+├── app.component.scss
+├── app.component.spec.ts
+├── app.component.ts
+├── app.config.ts
+└── app.routes.ts
+
+================================================
+File: app.component.html
+================================================
+<div class="container mx-auto">
+	<div class="w-full p-6 bg-white shadow-lg rounded-lg border border-gray-200">
+		<h2 class="text-xl font-semibold text-gray-800 mb-4">🛠 How to Use Drag & Drop</h2>
+
+		<ul class="space-y-3 text-gray-700">
+			<li class="flex items-start">
+				<span class="text-blue-500 text-lg font-bold">1.</span>
+				<p class="ml-2">
+					<strong>Moving Nodes:</strong> Drag and drop a node to reposition it within the same parent or move it under a different parent.
+				</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-blue-500 text-lg font-bold">2.</span>
+				<p class="ml-2"><strong>Reordering:</strong> Drag a node up or down within the same level to rearrange the order.</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-red-500 text-lg font-bold">🚫</span>
+				<p class="ml-2"><strong>Cannot drop a node onto its own parent</strong> to prevent circular structures.</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-red-500 text-lg font-bold">🚫</span>
+				<p class="ml-2">
+					<strong>Cannot drop a node onto a parent with no children.</strong> Use the "Add" button to create an initial child first.
+				</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-green-500 text-lg font-bold">✅</span>
+				<p class="ml-2"><strong>Can drop a node inside another node</strong> if the target node has at least one child.</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-yellow-500 text-lg font-bold">🔼</span>
+				<p class="ml-2">
+					<strong>Move Up a Level:</strong> If you need to move a node higher in the hierarchy, use the "Move Up Level" button instead.
+				</p>
+			</li>
+
+			<li class="flex items-start">
+				<span class="text-green-500 text-lg font-bold">🚫</span>
+				<p class="ml-2"><strong>Drag and Drop on very deep Level +12:</strong> BUG cannot moving nodes to deeper levels.</p>
+			</li>
+		</ul>
+
+		<div class="mt-4 p-3 bg-gray-100 border-l-4 border-blue-400 text-gray-800 rounded">
+			<p><strong>Tip:</strong> Dragging rules ensure a structured tree and prevent misplaced nodes.</p>
+		</div>
+	</div>
+	<router-outlet></router-outlet>
+	<div class="contact-info bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+		<p class="text-xl font-semibold text-gray-800 mb-4">Autor: Dai Hung PHAM</p>
+		<p class="text-gray-600 mb-2">
+			Email:
+			<a href="mailto:daihung.pham@gmail.com" class="text-blue-600 hover:text-blue-800 hover:underline"> daihung.pham&commat;gmail.com </a>
+		</p>
+		<p class="text-gray-600">
+			LinkedIn:
+			<a
+				href="https://www.linkedin.com/in/dai-hung-pham-25a684165/"
+				class="text-blue-600 hover:text-blue-800 hover:underline"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				Profile
+			</a>
+		</p>
+	</div>
+</div>
+
+
+================================================
+File: app.component.spec.ts
+================================================
+import { TestBed } from '@angular/core/testing';
+import { AppComponent } from './app.component';
+
+describe('AppComponent', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AppComponent],
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it(`should have the 'nested-tree' title`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.title).toEqual('nested-tree');
+  });
+
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, nested-tree');
+  });
+});
+
+
+================================================
+File: app.component.ts
+================================================
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+	selector: 'app-root',
+	imports: [RouterOutlet],
+	templateUrl: './app.component.html',
+	styleUrl: './app.component.scss',
+})
+export class AppComponent {
+	title = 'nested-tree';
+	uniqueId = `help_${Math.random().toString(36).substr(2, 9)}`;
+	isChecked = false;
+}
+
+
+================================================
+File: app.config.ts
+================================================
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+
+import { routes } from './app.routes';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { NestedSetService } from '@shared/services/nested-set/nested-set.service';
+
+export const appConfig: ApplicationConfig = {
+	providers: [
+		provideZoneChangeDetection({ eventCoalescing: true }),
+		provideRouter(routes, withComponentInputBinding()),
+		provideAnimations(),
+		provideAnimationsAsync(),
+		NestedSetService,
+	],
+};
+
+
+================================================
+File: app.routes.ts
+================================================
+import { Routes } from '@angular/router';
+
+export const routes: Routes = [
+	{ path: '', redirectTo: 'tree', pathMatch: 'full' },
+	{
+		path: 'tree',
+		loadComponent: () =>
+			import(
+				'./ui/pages/branch-display-container/branch-display-container.component'
+			).then((m) => m.AppTreeContainer),
+		canActivate: [],
+	},
+	{ path: '**', redirectTo: 'tree' },
+];
+
+
+================================================
+File: shared/interfaces/tree-node.model.ts
+================================================
+export interface TreeNode {
+	id: string;
+	value: string;
+	children: TreeNode[];
+}
+
+
+================================================
+File: shared/services/mook/mook.service.spec.ts
+================================================
+import { TestBed } from '@angular/core/testing';
+
+import { MookService } from './mook.service';
+
+describe('MookService', () => {
+  let service: MookService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(MookService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+
+================================================
+File: shared/services/mook/mook.service.ts
+================================================
+import { Injectable } from '@angular/core';
+import { NestedSetNode } from '../nested-set-tree-converter/nested-set-tree-converter.service';
+import { delay, Observable, of } from 'rxjs';
+
+@Injectable({
+	providedIn: 'root',
+})
+export class MookService {
+	private mockNestedSetData: NestedSetNode[] = [
+		{
+			id: '1739871788910',
+			value: 'New Node',
+			left: 3,
+			right: 4,
+			level: 2,
+		},
+		{
+			id: '1739871789124',
+			value: 'New Node',
+			left: 5,
+			right: 6,
+			level: 2,
+		},
+		{
+			id: '1739871774918',
+			value: 'New Node',
+			left: 2,
+			right: 7,
+			level: 1,
+		},
+		{
+			id: '1739871775837',
+			value: 'New Node',
+			left: 8,
+			right: 9,
+			level: 1,
+		},
+		{
+			id: '1',
+			value: 'Root',
+			left: 1,
+			right: 10,
+			level: 0,
+		},
+	];
+
+	getInitialNestedSetData(): Observable<NestedSetNode[]> {
+		// Simulate API call with 500ms delay
+		return of(this.mockNestedSetData).pipe(delay(500));
+	}
+}
+
+
+================================================
+File: shared/services/nested-set-tree-converter/nested-set-tree-converter.service.spec.ts
+================================================
+import { TestBed } from '@angular/core/testing';
+
+import { NestedSetTreeConverterService } from './nested-set-tree-converter.service';
+
+describe('NestedSetTreeConverterService', () => {
+  let service: NestedSetTreeConverterService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(NestedSetTreeConverterService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+
+================================================
+File: shared/services/nested-set-tree-converter/nested-set-tree-converter.service.ts
+================================================
+// nested-set-tree-converter.service.ts
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { TreeNode } from '@shared/interfaces/tree-node.model';
+
+export interface NestedSetNode {
+	id: string;
+	value: string;
+	left: number;
+	right: number;
+	level: number;
+}
+
+@Injectable({
+	providedIn: 'root',
+})
+export class NestedSetTreeConverterService {
+	private nodeValues = new Map<string, string>();
+	private treeDataSubject = new BehaviorSubject<TreeNode | null>(null);
+	private nestedSetDataSubject = new BehaviorSubject<NestedSetNode[]>([]);
+	private counter = 1;
+
+	treeData$: Observable<TreeNode | null> = this.treeDataSubject.asObservable();
+	nestedSetData$: Observable<NestedSetNode[]> =
+		this.nestedSetDataSubject.asObservable();
+
+	constructor() {}
+
+	// Add method to track node values
+	private trackNodeValue(nodeId: string, value: string) {
+		this.nodeValues.set(nodeId, value);
+	}
+
+	// Get tracked node value
+	private getNodeValue(nodeId: string, defaultValue: string): string {
+		return this.nodeValues.get(nodeId) || defaultValue;
+	}
+
+	getNestedSetData(): NestedSetNode[] {
+		return this.nestedSetDataSubject.getValue();
+	}
+
+	setNestedSetData(nestedSetData: NestedSetNode[]) {
+		// Track all existing node values before updating
+		nestedSetData.forEach((node) => {
+			if (this.nodeValues.has(node.id)) {
+				// Only update if value exists and is different
+				const currentValue = this.nodeValues.get(node.id);
+				if (currentValue !== node.value) {
+					this.trackNodeValue(node.id, node.value);
+				}
+			} else {
+				// Track new values
+				this.trackNodeValue(node.id, node.value);
+			}
+		});
+
+		// Sort data by left value
+		const sortedData = [...nestedSetData].sort((a, b) => a.left - b.left);
+
+		// Update the subjects
+		this.nestedSetDataSubject.next(sortedData);
+		const treeData = this.convertToTree(sortedData);
+		this.treeDataSubject.next(treeData);
+
+		console.log('Updated nested set data:', {
+			nestedSetData: sortedData,
+			treeData,
+			trackedValues: Array.from(this.nodeValues.entries()),
+		});
+	}
+
+	convertToNestedSet(treeData: TreeNode): NestedSetNode[] {
+		this.counter = 1;
+		const result: NestedSetNode[] = [];
+		this.processNode(treeData, result, 0);
+		return result;
+	}
+
+	private processNode(
+		node: TreeNode,
+		result: NestedSetNode[],
+		level: number
+	): void {
+		const currentNode: NestedSetNode = {
+			id: node.id,
+			value: node.value,
+			left: this.counter++,
+			right: 0,
+			level: level,
+		};
+
+		// Process children recursively
+		node.children.forEach((child) => {
+			this.processNode(child, result, level + 1);
+		});
+
+		// Set right value after processing all children
+		currentNode.right = this.counter++;
+		result.push(currentNode);
+	}
+
+	updateNodeValue(nodeId: string, newValue: string) {
+		// Update the tracked value
+		this.trackNodeValue(nodeId, newValue);
+
+		const currentData = this.getNestedSetData();
+		const updatedData = currentData.map((node) =>
+			node.id === nodeId
+				? { ...node, value: newValue }
+				: { ...node, value: this.getNodeValue(node.id, node.value) }
+		);
+
+		this.setNestedSetData(updatedData);
+	}
+
+	private convertToTree(nestedSetNodes: NestedSetNode[]): TreeNode {
+		if (nestedSetNodes.length === 0) {
+			return { id: '0', value: '', children: [] };
+		}
+
+		const nodeMap = new Map<string, TreeNode>();
+		const stack: NestedSetNode[] = [];
+		let root: TreeNode | null = null;
+
+		const sortedNodes = [...nestedSetNodes].sort((a, b) => a.left - b.left);
+
+		sortedNodes.forEach((node) => {
+			const treeNode: TreeNode = {
+				id: node.id,
+				value: this.getNodeValue(node.id, node.value), // Use tracked value
+				children: [],
+			};
+			nodeMap.set(node.id, treeNode);
+
+			while (stack.length > 0 && stack[stack.length - 1].right < node.left) {
+				stack.pop();
+			}
+
+			if (stack.length > 0) {
+				const parent = nodeMap.get(stack[stack.length - 1].id);
+				if (parent) {
+					parent.children.push(treeNode);
+				}
+			} else if (!root) {
+				root = treeNode;
+			}
+
+			stack.push(node);
+		});
+
+		return root || { id: '0', value: '', children: [] };
+	}
+
+	validateNestedSet(nodes: NestedSetNode[]): string[] {
+		const errors: string[] = [];
+		const sortedNodes = [...nodes].sort((a, b) => a.left - b.left);
+
+		// Check for continuous numbering
+		const allNumbers = sortedNodes
+			.flatMap((node) => [node.left, node.right])
+			.sort((a, b) => a - b);
+
+		// Verify sequence
+		for (let i = 0; i < allNumbers.length; i++) {
+			if (allNumbers[i] !== i + 1) {
+				errors.push(`Non-continuous numbering at position ${i + 1}`);
+			}
+		}
+
+		// Verify parent-child relationships and levels
+		sortedNodes.forEach((node) => {
+			// Check right value is greater than left value
+			if (node.right <= node.left) {
+				errors.push(
+					`Node ${node.id}: Right value (${node.right}) must be greater than left value (${node.left})`
+				);
+			}
+
+			// Verify level based on parent-child relationship
+			if (node.level === 0 && node !== sortedNodes[0]) {
+				errors.push(`Node ${node.id}: Only root node can have level 0`);
+			}
+
+			// Find parent node
+			const parent = sortedNodes.find(
+				(potential) =>
+					potential.left < node.left &&
+					potential.right > node.right &&
+					potential.right - potential.left > node.right - node.left
+			);
+
+			if (parent && node.level !== parent.level + 1) {
+				errors.push(
+					`Node ${node.id}: Level mismatch with parent. Expected ${
+						parent.level + 1
+					}, got ${node.level}`
+				);
+			}
+		});
+
+		return errors;
+	}
+
+	addNode(parentId: string): string {
+		const currentData = this.getNestedSetData();
+		const parentNode = currentData.find((node) => node.id === parentId);
+
+		if (!parentNode) return '';
+
+		const newNodeId = Date.now().toString();
+		const insertionPoint = parentNode.right - 1;
+
+		// Preserve existing nodes' values using the tracking system
+		const updatedData = currentData.map((node) => ({
+			...node,
+			left: node.left > insertionPoint ? node.left + 2 : node.left,
+			right: node.right > insertionPoint ? node.right + 2 : node.right,
+			value: this.getNodeValue(node.id, node.value), // Use tracked value
+		}));
+
+		// Create new node
+		const newNode: NestedSetNode = {
+			id: newNodeId,
+			value: 'New Node',
+			left: insertionPoint + 1,
+			right: insertionPoint + 2,
+			level: parentNode.level + 1,
+		};
+
+		// Track the new node's value
+		this.trackNodeValue(newNodeId, 'New Node');
+
+		// Combine and sort
+		const finalData = [...updatedData, newNode].sort((a, b) => a.left - b.left);
+
+		// Recalculate levels while preserving values
+		const recalculatedData = this.recalculateLevels(finalData).map((node) => ({
+			...node,
+			value: this.getNodeValue(node.id, node.value), // Ensure values are preserved
+		}));
+
+		this.setNestedSetData(recalculatedData);
+		console.log('Added new node:', {
+			nodeId: newNodeId,
+			parentId,
+			parentValue: this.getNodeValue(parentId, parentNode.value),
+			trackedValues: Array.from(this.nodeValues.entries()),
+		});
+
+		return newNodeId;
+	}
+
+	private recalculateLevels(nodes: NestedSetNode[]): NestedSetNode[] {
+		const sortedNodes = [...nodes].sort((a, b) => a.left - b.left);
+		const rootNode = sortedNodes[0];
+		if (!rootNode) return nodes;
+
+		const levelMap = new Map<string, number>();
+		levelMap.set(rootNode.id, 0);
+
+		sortedNodes.forEach((node) => {
+			if (node.id === rootNode.id) return;
+
+			const parent = sortedNodes.find(
+				(potential) =>
+					potential.left < node.left &&
+					potential.right > node.right &&
+					(!levelMap.has(node.id) ||
+						potential.right - potential.left > node.right - node.left)
+			);
+
+			if (parent) {
+				const parentLevel = levelMap.get(parent.id) || 0;
+				levelMap.set(node.id, parentLevel + 1);
+			}
+		});
+
+		// Update only the levels, preserve all other properties including values
+		return sortedNodes.map((node) => ({
+			...node, // Keep all existing properties
+			level: levelMap.get(node.id) || 0,
+			// Don't modify value or other properties
+		}));
+	}
+
+	deleteNode(nodeId: string) {
+		const currentData = this.getNestedSetData();
+		const nodeToDelete = currentData.find((node) => node.id === nodeId);
+
+		if (!nodeToDelete) return;
+
+		// Remove the tracked value for the deleted node
+		this.nodeValues.delete(nodeId);
+
+		// Continue with existing delete logic...
+		const width = nodeToDelete.right - nodeToDelete.left + 1;
+		const updatedData = currentData
+			.filter(
+				(node) =>
+					node.left < nodeToDelete.left || node.left > nodeToDelete.right
+			)
+			.map((node) => ({
+				...node,
+				left: node.left > nodeToDelete.right ? node.left - width : node.left,
+				right:
+					node.right > nodeToDelete.right ? node.right - width : node.right,
+				value: this.getNodeValue(node.id, node.value),
+			}));
+
+		this.setNestedSetData(updatedData);
+	}
+
+	moveNode(
+		nodeId: string,
+		targetParentId: string,
+		position: 'before' | 'after' | 'inside'
+	) {
+		const nestedSetData = [...this.nestedSetDataSubject.value];
+		const nodeToMove = nestedSetData.find((node) => node.id === nodeId);
+		const targetParent = nestedSetData.find(
+			(node) => node.id === targetParentId
+		);
+
+		if (!nodeToMove || !targetParent) return;
+
+		// Prevent moving node to its own descendant
+		if (this.isDescendant(nodeToMove, targetParent, nestedSetData)) {
+			return;
+		}
+
+		const nodeWidth = nodeToMove.right - nodeToMove.left + 1;
+		const oldLeft = nodeToMove.left;
+		const oldRight = nodeToMove.right;
+		let newLeft: number;
+		let levelChange: number;
+
+		if (position === 'inside') {
+			newLeft = targetParent.right;
+			levelChange = targetParent.level + 1 - nodeToMove.level;
+		} else {
+			newLeft =
+				position === 'before' ? targetParent.left : targetParent.right + 1;
+			levelChange = targetParent.level - nodeToMove.level;
+		}
+
+		// Adjust all nodes' positions
+		const updatedData = nestedSetData.map((node) => {
+			let adjustedNode = { ...node };
+
+			// Adjust nodes that are part of the moved subtree
+			if (node.left >= oldLeft && node.right <= oldRight) {
+				const offset = newLeft - oldLeft;
+				adjustedNode.left += offset;
+				adjustedNode.right += offset;
+				adjustedNode.level += levelChange;
+			}
+			// Adjust nodes that were between old and new position
+			else if (
+				(newLeft < oldLeft && node.left >= newLeft && node.left < oldLeft) ||
+				(newLeft > oldRight && node.left > oldRight && node.left <= newLeft)
+			) {
+				adjustedNode.left += nodeWidth;
+				adjustedNode.right += nodeWidth;
+			}
+
+			return adjustedNode;
+		});
+
+		this.setNestedSetData(updatedData);
+	}
+
+	private isDescendant(
+		node: NestedSetNode,
+		potentialDescendant: NestedSetNode,
+		nodes: NestedSetNode[]
+	): boolean {
+		return (
+			potentialDescendant.left > node.left &&
+			potentialDescendant.right < node.right
+		);
+	}
+}
+
+
+================================================
+File: shared/services/nested-set/nested-set.service.spec.ts
+================================================
+import { TestBed } from '@angular/core/testing';
+
+import { NestedSetService } from './nested-set.service';
+
+describe('NestedSetService', () => {
+  let service: NestedSetService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(NestedSetService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+
+================================================
+File: shared/services/nested-set/nested-set.service.ts
+================================================
+// nested-set.service.ts
+import { Injectable } from '@angular/core';
+import { TreeNode } from '@shared/interfaces/tree-node.model';
+
+export interface NestedSetNode {
+	id: string;
+	value: string;
+	left: number;
+	right: number;
+	level: number;
+}
+
+@Injectable({
+	providedIn: 'root',
+})
+export class NestedSetService {
+	private counter = 1;
+
+	convertToNestedSet(treeData: TreeNode): NestedSetNode[] {
+		this.counter = 1;
+		const result: NestedSetNode[] = [];
+		this.processNode(treeData, result, 0);
+		return result;
+	}
+
+	private processNode(
+		node: TreeNode,
+		result: NestedSetNode[],
+		level: number
+	): void {
+		const currentNode: NestedSetNode = {
+			id: node.id,
+			value: node.value,
+			left: this.counter++,
+			right: 0,
+			level: level,
+		};
+
+		// Process children recursively
+		node.children.forEach((child) => {
+			this.processNode(child, result, level + 1);
+		});
+
+		// Set right value after processing all children
+		currentNode.right = this.counter++;
+		result.push(currentNode);
+	}
+
+	convertToTree(nestedSetNodes: NestedSetNode[]): TreeNode {
+		// Sort nodes by left value to ensure proper order
+		const sortedNodes = [...nestedSetNodes].sort((a, b) => a.left - b.left);
+
+		const nodeMap = new Map<string, TreeNode>();
+		const stack: NestedSetNode[] = [];
+		let root: TreeNode | null = null;
+
+		sortedNodes.forEach((node) => {
+			const treeNode: TreeNode = {
+				id: node.id,
+				value: node.value,
+				children: [],
+			};
+			nodeMap.set(node.id, treeNode);
+
+			while (stack.length > 0 && stack[stack.length - 1].right < node.left) {
+				stack.pop();
+			}
+
+			if (stack.length > 0) {
+				const parent = nodeMap.get(stack[stack.length - 1].id);
+				if (parent) {
+					parent.children.push(treeNode);
+				}
+			} else if (!root) {
+				root = treeNode;
+			}
+
+			stack.push(node);
+		});
+
+		return root || { id: '0', value: '', children: [] };
+	}
+
+	validateNestedSet(nodes: NestedSetNode[]): boolean {
+		// Sort nodes by left value
+		const sortedNodes = [...nodes].sort((a, b) => a.left - b.left);
+
+		// Check for continuous numbering
+		const allNumbers = sortedNodes
+			.flatMap((node) => [node.left, node.right])
+			.sort((a, b) => a - b);
+		for (let i = 0; i < allNumbers.length; i++) {
+			if (allNumbers[i] !== i + 1) {
+				return false;
+			}
+		}
+
+		// Check parent-child relationships
+		for (let i = 0; i < sortedNodes.length; i++) {
+			const current = sortedNodes[i];
+
+			// Right value must be greater than left value
+			if (current.right <= current.left) {
+				return false;
+			}
+
+			// Check nesting with other nodes
+			for (let j = 0; j < sortedNodes.length; j++) {
+				if (i !== j) {
+					const other = sortedNodes[j];
+					// Check for proper nesting
+					if (current.left < other.left && current.right > other.right) {
+						if (other.level !== current.level + 1) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+}
+
+
+================================================
+File: shared/services/tree/tree.service.spec.ts
+================================================
+import { TestBed } from '@angular/core/testing';
+import { TreeService } from './tree.service';
+import { TreeNode } from '@shared/interfaces/tree-node.model';
+
+describe('TreeService - Complex Operations', () => {
+	let service: TreeService;
+	let rootNode: TreeNode;
+	let level1Node: TreeNode;
+	let level2Node: TreeNode;
+	let level3Node: TreeNode;
+	let siblingNode: TreeNode;
+
+	beforeEach(() => {
+		TestBed.configureTestingModule({});
+		service = TestBed.inject(TreeService);
+
+		// Create a deep tree structure for testing
+		level3Node = { id: 'level3', value: 'Level 3', children: [] };
+		level2Node = { id: 'level2', value: 'Level 2', children: [level3Node] };
+		siblingNode = { id: 'sibling', value: 'Sibling', children: [] };
+		level1Node = { id: 'level1', value: 'Level 1', children: [level2Node] };
+		rootNode = {
+			id: 'root',
+			value: 'Root',
+			children: [level1Node, siblingNode],
+		};
+
+		// Initialize the tree in the service
+		service.updateNodeMaps(rootNode);
+		service.updateNodeMaps(level1Node, rootNode.id);
+		service.updateNodeMaps(level2Node, level1Node.id);
+		service.updateNodeMaps(level3Node, level2Node.id);
+		service.updateNodeMaps(siblingNode, rootNode.id);
+	});
+
+	describe('Deep Level Operations', () => {
+		it('should find nodes at any depth', () => {
+			expect(service.findNodeById('level3')).toBeTruthy();
+			expect(service.findNodeById('level3')).toEqual(level3Node);
+		});
+
+		it('should correctly track parent relationships at all levels', () => {
+			expect(service.getParentNode('level3')?.id).toBe('level2');
+			expect(service.getParentNode('level2')?.id).toBe('level1');
+			expect(service.getParentNode('level1')?.id).toBe('root');
+		});
+
+		it('should move deep node to first level (deep to shallow)', () => {
+			// Move level3 node to be a child of root
+			const result = service.moveNode('level3', 'root', 'inside');
+
+			expect(result).toBeTrue();
+			expect(rootNode.children).toContain(level3Node);
+			expect(level2Node.children).not.toContain(level3Node);
+			expect(service.getParentNode('level3')?.id).toBe('root');
+		});
+
+		it('should move node from shallow to deep level (shallow to deep)', () => {
+			// Move sibling node to be a child of level3
+			const result = service.moveNode('sibling', 'level3', 'inside');
+
+			expect(result).toBeTrue();
+			expect(level3Node.children).toContain(siblingNode);
+			expect(rootNode.children).not.toContain(siblingNode);
+			expect(service.getParentNode('sibling')?.id).toBe('level3');
+		});
+
+		it('should handle moving node between deep branches', () => {
+			// Create a parallel deep branch
+			const newBranch: TreeNode = {
+				id: 'newBranch',
+				value: 'New Branch',
+				children: [{ id: 'deepBranch', value: 'Deep Branch', children: [] }],
+			};
+			rootNode.children.push(newBranch);
+			service.updateNodeMaps(newBranch, rootNode.id);
+			service.updateNodeMaps(newBranch.children[0], newBranch.id);
+
+			// Move level3 node to deepBranch
+			const result = service.moveNode('level3', 'deepBranch', 'inside');
+
+			expect(result).toBeTrue();
+			expect(level2Node.children).not.toContain(level3Node);
+			expect(newBranch.children[0].children).toContain(level3Node);
+			expect(service.getParentNode('level3')?.id).toBe('deepBranch');
+		});
+	});
+
+	describe('Complex Reordering Operations', () => {
+		it('should maintain correct order when moving nodes up the tree', () => {
+			// Move level3 node before level1
+			const result = service.moveNode('level3', 'level1', 'before');
+
+			expect(result).toBeTrue();
+			const rootChildren = rootNode.children;
+			expect(rootChildren.indexOf(level3Node)).toBeLessThan(
+				rootChildren.indexOf(level1Node)
+			);
+		});
+
+		it('should handle multiple moves maintaining tree integrity', () => {
+			// Multiple moves scenario
+			service.moveNode('level3', 'root', 'inside'); // Move to root
+			service.moveNode('level2', 'level3', 'inside'); // Move under previous child
+			service.moveNode('sibling', 'level2', 'inside'); // Move to new branch
+
+			expect(rootNode.children).toContain(level3Node);
+			expect(level3Node.children).toContain(level2Node);
+			expect(level2Node.children).toContain(siblingNode);
+
+			// Verify parent relationships
+			expect(service.getParentNode('level3')?.id).toBe('root');
+			expect(service.getParentNode('level2')?.id).toBe('level3');
+			expect(service.getParentNode('sibling')?.id).toBe('level2');
+		});
+
+		it('should prevent circular references', () => {
+			// Attempt to move parent under its own child
+			const result = service.moveNode('level1', 'level3', 'inside');
+
+			expect(result).toBeFalse();
+			expect(level3Node.children).not.toContain(level1Node);
+			expect(service.getParentNode('level1')?.id).toBe('root');
+		});
+	});
+
+	describe('Edge Cases', () => {
+		it('should handle moving last child maintaining parent references', () => {
+			// Move the only child of level2
+			service.moveNode('level3', 'root', 'inside');
+
+			expect(level2Node.children.length).toBe(0);
+			expect(service.getParentNode('level2')?.id).toBe('level1');
+		});
+
+		it('should handle moving node to its existing parent', () => {
+			// Move node where it already is
+			const result = service.moveNode('level3', 'level2', 'inside');
+
+			expect(result).toBeTrue();
+			expect(level2Node.children).toContain(level3Node);
+			expect(level2Node.children.length).toBe(1);
+		});
+
+		it('should handle moving between siblings maintaining order', () => {
+			// Add another sibling for testing
+			const newSibling: TreeNode = {
+				id: 'newSibling',
+				value: 'New Sibling',
+				children: [],
+			};
+			rootNode.children.push(newSibling);
+			service.updateNodeMaps(newSibling, rootNode.id);
+
+			// Move between siblings
+			service.moveNode('sibling', 'newSibling', 'before');
+
+			const siblingIndex = rootNode.children.indexOf(siblingNode);
+			const newSiblingIndex = rootNode.children.indexOf(newSibling);
+			expect(siblingIndex).toBeLessThan(newSiblingIndex);
+		});
+	});
+});
+
+
+================================================
+File: shared/services/tree/tree.service.ts
+================================================
+import { Injectable } from '@angular/core';
+import { TreeNode } from '@shared/interfaces/tree-node.model';
+
+@Injectable({
+	providedIn: 'root',
+})
+export class TreeService {
+	private nodeMap = new Map<string, TreeNode>();
+	private parentMap = new Map<string, string>();
+
+	getRegisteredNodes(): string[] {
+		return Array.from(this.nodeMap.keys());
+	}
+
+	updateNodeMaps(node: TreeNode, parentId?: string) {
+		console.log('Updating node maps:', {
+			nodeId: node.id,
+			parentId,
+			nodeValue: node.value,
+			childrenCount: node.children.length,
+		});
+
+		// Clear existing mappings for this node
+		this.nodeMap.delete(node.id);
+		this.parentMap.delete(node.id);
+
+		// Set new mappings
+		this.nodeMap.set(node.id, node);
+		if (parentId) {
+			this.parentMap.set(node.id, parentId);
+		}
+
+		// Recursively update all children
+		node.children.forEach((child: TreeNode) => {
+			this.updateNodeMaps(child, node.id);
+		});
+
+		console.log('Updated node maps:', {
+			nodeMapSize: this.nodeMap.size,
+			parentMapSize: this.parentMap.size,
+			nodeMapKeys: Array.from(this.nodeMap.keys()),
+			parentMapEntries: Array.from(this.parentMap.entries()),
+		});
+	}
+
+	findNodeById(id: string): TreeNode | undefined {
+		const node = this.nodeMap.get(id);
+		console.log('Finding node by id:', {
+			searchId: id,
+			found: !!node,
+			nodeValue: node?.value,
+		});
+		return node;
+	}
+
+	getParentNode(nodeId: string): TreeNode | undefined {
+		const parentId = this.parentMap.get(nodeId);
+		const parentNode = parentId ? this.nodeMap.get(parentId) : undefined;
+		console.log('Getting parent node:', {
+			childId: nodeId,
+			parentId,
+			foundParent: !!parentNode,
+			parentValue: parentNode?.value,
+		});
+		return parentNode;
+	}
+
+	private isDescendant(nodeId: string, targetId: string): boolean {
+		console.log('Checking if descendant:', {
+			nodeId,
+			targetId,
+		});
+
+		let currentNode = this.findNodeById(targetId);
+		let depth = 0;
+
+		while (currentNode && depth < 1000) {
+			console.log('Traversing up the tree:', {
+				currentNodeId: currentNode.id,
+				currentNodeValue: currentNode.value,
+				depth,
+			});
+
+			if (currentNode.id === nodeId) {
+				console.log('Found ancestor match - would create circular reference');
+				return true;
+			}
+			currentNode = this.getParentNode(currentNode.id);
+			depth++;
+		}
+
+		console.log('No circular reference found');
+		return false;
+	}
+
+	moveNode(
+		nodeId: string,
+		targetId: string,
+		position: 'before' | 'after' | 'inside',
+		insertIndex?: number
+	): boolean {
+		console.log('Starting moveNode operation:', {
+			nodeId,
+			targetId,
+			position,
+			insertIndex,
+			targetNodeValue: this.findNodeById(targetId)?.value,
+		});
+
+		const sourceNode = this.findNodeById(nodeId);
+		const targetNode = this.findNodeById(targetId);
+
+		if (!sourceNode || !targetNode) {
+			console.log('Move failed: Source or target node not found');
+			return false;
+		}
+
+		const sourceParent = this.getParentNode(nodeId);
+		if (!sourceParent) {
+			console.log('Move failed: Source parent not found');
+			return false;
+		}
+
+		// Check for circular reference
+		if (this.isDescendant(nodeId, targetId)) {
+			console.log('Move failed: Would create circular reference');
+			return false;
+		}
+
+		// Remove from old parent
+		sourceParent.children = sourceParent.children.filter(
+			(child: TreeNode) => child.id !== nodeId
+		);
+
+		// Add to new location
+		if (position === 'inside') {
+			if (typeof insertIndex === 'number' && insertIndex >= 0) {
+				// Insert at specific position
+				targetNode.children.splice(insertIndex, 0, sourceNode);
+			} else {
+				// Default behavior: append to end
+				targetNode.children.push(sourceNode);
+			}
+			this.parentMap.set(nodeId, targetId);
+		} else {
+			const targetParent = this.getParentNode(targetId);
+			if (!targetParent) {
+				console.log('Move failed: Target parent not found');
+				return false;
+			}
+
+			const targetIndex = targetParent.children.findIndex(
+				(child: TreeNode) => child.id === targetId
+			);
+			const insertPosition =
+				position === 'after' ? targetIndex + 1 : targetIndex;
+			targetParent.children.splice(insertPosition, 0, sourceNode);
+			this.parentMap.set(nodeId, targetParent.id);
+		}
+
+		console.log('Move completed successfully. New structure:', {
+			movedNodeId: nodeId,
+			newParentId: targetId,
+			newParentValue: targetNode.value,
+			insertPosition: insertIndex,
+		});
+
+		return true;
+	}
+	deleteNode(nodeId: string) {
+		// Remove node from nodeMap
+		this.nodeMap.delete(nodeId);
+
+		// Find and remove all children of the node recursively
+		this.findAllChildrenIds(nodeId).forEach((childId) => {
+			this.nodeMap.delete(childId);
+			this.parentMap.delete(childId);
+		});
+
+		// Remove node from parentMap
+		this.parentMap.delete(nodeId);
+	}
+
+	private findAllChildrenIds(nodeId: string): string[] {
+		const node = this.findNodeById(nodeId);
+		if (!node) return [];
+
+		const childrenIds: string[] = [];
+		const processChildren = (children: TreeNode[]) => {
+			children.forEach((child) => {
+				childrenIds.push(child.id);
+				processChildren(child.children);
+			});
+		};
+
+		processChildren(node.children);
+		return childrenIds;
+	}
+}
+
+
+================================================
+File: ui/components/branch-display/branch-display.component.html
+================================================
+<!-- Tree node template -->
+<div class="relative pl-8 mt-1 ml-6" [class.ml-0]="isRoot" [class.pl-3]="isRoot">
+	<!-- Node Content -->
+	<div
+		class="flex items-center gap-2 relative cursor-move bg-white rounded p-1.5 transition-all duration-200 w-fit"
+		cdkDrag
+		[cdkDragData]="node"
+		(cdkDragStarted)="onDragStarted()"
+		(cdkDragEnded)="onDragEnded()"
+		[ngClass]="{
+			'bg-red-50 border-4 border-red-500 p-2.5 rounded-lg': isRoot,
+			'bg-gray-50 border-3 border-blue-200 rounded': node.children.length > 0,
+			'bg-green-50 border border-green-200 rounded': node.children.length === 0
+		}"
+	>
+		<!-- Vertical and Horizontal Connector Lines -->
+		<div *ngIf="!isRoot" class="absolute -left-8 top-1/2 flex items-center">
+			<div class="absolute -left-6 w-14 h-0.5 bg-gray-300"></div>
+		</div>
+
+		<!-- Node Icon -->
+		<div *ngIf="!isRoot" class="w-5 text-center text-base">
+			<span class="text-yellow-500">{{ node.children.length > 0 ? '📁' : '📄' }}</span>
+		</div>
+
+		<!-- Root Icon -->
+		<div *ngIf="isRoot" class="text-xl mr-2 text-yellow-500">📁</div>
+
+		<!-- Input Field -->
+		<input
+			[(ngModel)]="node.value"
+			[placeholder]="isRoot ? 'Root Node' : 'Enter value'"
+			class="px-1.5 w-[200px] min-w-[150px] max-w-[300px]"
+			[ngClass]="{ 'font-bold text-base text-blue-700 bg-white': isRoot }"
+		/>
+
+		<!-- Action Buttons -->
+		<div class="flex gap-1.5 ml-2">
+			<!-- Delete Button -->
+			<button
+				*ngIf="!isRoot"
+				(click)="deleteNode()"
+				class="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-sm hover:bg-red-600"
+				title="Delete Node"
+			>
+				×
+			</button>
+
+			<!-- Add Child Button -->
+			<button
+				(click)="addChild()"
+				class="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-sm hover:bg-green-600"
+				[ngClass]="{ 'bg-blue-500 hover:bg-blue-600': isRoot }"
+				title="Add Child Node"
+			>
+				+
+			</button>
+
+			<!-- Move Up Button -->
+			<button
+				*ngIf="!isRoot"
+				(click)="moveUpLevel()"
+				class="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm hover:bg-blue-600"
+				title="Move to upper level"
+			>
+				↑
+			</button>
+
+			<!-- Drag Handle -->
+			<div *ngIf="!isRoot" class="text-gray-600 select-none cursor-move px-1" cdkDragHandle title="Drag to reorder">☰</div>
+		</div>
+	</div>
+
+	<!-- Children Container -->
+	<div
+		*ngIf="node.children.length > 0 || !isRoot"
+		class="relative ml-8"
+		cdkDropList
+		[id]="dropListId"
+		[cdkDropListData]="node.children"
+		[cdkDropListConnectedTo]="dropListIds"
+		(cdkDropListDropped)="drop($event)"
+		[cdkDropListEnterPredicate]="canDrop"
+	>
+		<!-- Vertical Line for Children -->
+		<div class="absolute left-0 -top-1 w-1 h-full bg-gray-300 z-index-0" [ngClass]="{ 'bg-blue-500': isRoot }"></div>
+
+		<!-- Child Nodes -->
+		<app-tree
+			*ngFor="let child of node.children; let last = last"
+			[node]="child"
+			[isLastChild]="last"
+			[isRoot]="false"
+			[dropListIds]="dropListIds"
+			(onDelete)="removeChild($event)"
+			(registerDropList)="onRegisterDropList($event)"
+		>
+		</app-tree>
+	</div>
+</div>
+
+
+================================================
+File: ui/components/branch-display/branch-display.component.scss
+================================================
+.cdk-drag-preview {
+	@apply opacity-90;
+}
+
+.cdk-drag-placeholder {
+	@apply opacity-50;
+}
+
+.cdk-drop-list-dragging .node-content:not(.cdk-drag-placeholder) {
+	@apply transition-all duration-200;
+}
+
+
+================================================
+File: ui/components/branch-display/branch-display.component.ts
+================================================
+// tree.component.ts
+import {
+	CdkDrag,
+	CdkDragDrop,
+	CdkDropList,
+	DragDropModule,
+	moveItemInArray,
+} from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	EventEmitter,
+	Input,
+	OnInit,
+	Output,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TreeNode } from '@shared/interfaces/tree-node.model';
+import { NestedSetTreeConverterService } from '@shared/services/nested-set-tree-converter/nested-set-tree-converter.service';
+import { TreeService } from '@shared/services/tree/tree.service';
+
+@Component({
+	selector: 'app-tree',
+	standalone: true,
+	imports: [CommonModule, FormsModule, DragDropModule],
+	templateUrl: './branch-display.component.html',
+	styleUrls: ['./branch-display.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class TreeComponent implements OnInit {
+	@Input() node!: TreeNode;
+	@Input() isLastChild = false;
+	@Input() isRoot = true;
+	@Input() dropListIds: string[] = [];
+	@Output() onDelete = new EventEmitter<string>();
+	@Output() registerDropList = new EventEmitter<string>();
+	@Output() treeUpdated = new EventEmitter<void>();
+
+	dropListId = `drop-list-${Math.random().toString(36).substring(2)}`;
+	private hasBeenInitialized = false;
+
+	constructor(
+		private treeService: TreeService,
+		private nestedSetConverter: NestedSetTreeConverterService,
+		private changeDetectorRef: ChangeDetectorRef
+	) {}
+
+	ngOnInit() {
+		if (!this.hasBeenInitialized) {
+			this.registerDropList.emit(this.dropListId);
+			console.log('Tree Component Initialized:', {
+				nodeId: this.node.id,
+				value: this.node.value,
+				children: this.node.children.length,
+			});
+			this.hasBeenInitialized = true;
+		}
+	}
+
+	private isDescendant(dragNode: TreeNode, targetNode: TreeNode): boolean {
+		return targetNode.children.some(
+			(child: TreeNode) =>
+				child.id === dragNode.id || this.isDescendant(dragNode, child)
+		);
+	}
+
+	canDrop = (drag: CdkDrag, drop: CdkDropList) => {
+		const dragData = drag.data as TreeNode;
+		const dropData = this.node;
+
+		// Allow dropping if:
+		// 1. Not dropping onto itself
+		// 2. Not dropping onto its own descendant
+		// 3. Not dropping onto root if it's a move operation
+		if (dragData.id === dropData.id || this.isDescendant(dragData, dropData)) {
+			return false;
+		}
+
+		// Allow dropping on nodes with children
+		if (dropData.children && dropData.children.length > 0) {
+			return true;
+		}
+
+		// Allow dropping on leaf nodes only if they're not the root
+		return !this.isRoot;
+	};
+
+	drop(event: CdkDragDrop<TreeNode[]>) {
+		const draggedNode = event.item.data as TreeNode;
+
+		if (event.previousContainer === event.container) {
+			// Same container - reorder
+			moveItemInArray(
+				event.container.data,
+				event.previousIndex,
+				event.currentIndex
+			);
+		} else {
+			// Different container - transfer
+			const success = this.treeService.moveNode(
+				draggedNode.id,
+				this.node.id,
+				'inside',
+				event.currentIndex
+			);
+
+			if (success) {
+				// Find root and update nested set
+				const rootNode = this.findRootNode(this.node);
+				if (rootNode) {
+					const nestedSetData =
+						this.nestedSetConverter.convertToNestedSet(rootNode);
+					this.nestedSetConverter.setNestedSetData(nestedSetData);
+				}
+			}
+		}
+
+		// Force change detection and emit update
+		this.changeDetectorRef.detectChanges();
+		this.treeUpdated.emit();
+	}
+
+	moveUpLevel() {
+		const currentParent = this.treeService.getParentNode(this.node.id);
+		if (!currentParent) {
+			console.log('Cannot move up: No parent found');
+			return;
+		}
+
+		const grandParent = this.treeService.getParentNode(currentParent.id);
+		if (!grandParent) {
+			console.log('Cannot move up: No grandparent found');
+			return;
+		}
+
+		// Find the index where the current parent is in the grandparent's children
+		const parentIndex = grandParent.children.findIndex(
+			(child: TreeNode) => child.id === currentParent.id
+		);
+
+		if (parentIndex === -1) {
+			console.log('Cannot move up: Parent index not found');
+			return;
+		}
+
+		// Move the node one level up
+		const success = this.treeService.moveNode(
+			this.node.id,
+			grandParent.id,
+			'inside',
+			parentIndex + 1 // Insert after the current parent
+		);
+
+		if (success) {
+			console.log('Node moved up successfully:', {
+				nodeId: this.node.id,
+				newParentId: grandParent.id,
+				position: parentIndex + 1,
+			});
+		}
+	}
+
+	// Update the tree service to include better logging
+	removeChild(childId: string) {
+		const index = this.node.children.findIndex(
+			(child: TreeNode) => child.id === childId
+		);
+		if (index !== -1) {
+			const removedNode = this.node.children[index];
+			this.node.children.splice(index, 1);
+			console.log('Removed child:', {
+				childId,
+				parentId: this.node.id,
+				parentValue: this.node.value,
+			});
+		}
+	}
+
+	addChild() {
+		// Use the NestedSetTreeConverterService to add the node
+		const newNodeId = this.nestedSetConverter.addNode(this.node.id);
+
+		if (!newNodeId) {
+			console.error('Failed to add new node');
+			return;
+		}
+
+		// Create the new tree node
+		const newNode: TreeNode = {
+			id: newNodeId,
+			value: 'New Node',
+			children: [],
+		};
+
+		// Update tree service maps
+		this.treeService.updateNodeMaps(newNode, this.node.id);
+
+		// Add to UI tree structure
+		this.node.children.push(newNode);
+
+		// Force change detection and emit update
+		this.changeDetectorRef.detectChanges();
+		this.treeUpdated.emit();
+
+		console.log('Added child node:', {
+			nodeId: newNodeId,
+			parentId: this.node.id,
+			parentValue: this.node.value,
+		});
+	}
+
+	deleteNode() {
+		// Emit the delete event to parent
+		this.onDelete.emit(this.node.id);
+
+		// Find the parent node
+		const parentNode = this.treeService.getParentNode(this.node.id);
+		if (parentNode) {
+			// Remove the node from parent's children
+			parentNode.children = parentNode.children.filter(
+				(child) => child.id !== this.node.id
+			);
+
+			// Find root node to update nested set
+			const rootNode = this.findRootNode(parentNode);
+			if (rootNode) {
+				// Convert updated tree to nested set and update
+				const nestedSetData =
+					this.nestedSetConverter.convertToNestedSet(rootNode);
+				this.nestedSetConverter.setNestedSetData(nestedSetData);
+			}
+		}
+
+		// Update the tree service
+		this.treeService.deleteNode(this.node.id);
+
+		// Emit update event
+		this.treeUpdated.emit();
+		this.changeDetectorRef.markForCheck();
+	}
+
+	// Add this method to TreeService
+	private findRootNode(node: TreeNode): TreeNode | null {
+		let currentNode = node;
+		let parentNode = this.treeService.getParentNode(currentNode.id);
+		let visitedNodes = new Set<string>();
+
+		while (parentNode) {
+			if (visitedNodes.has(parentNode.id)) {
+				console.error('Circular reference detected');
+				return null;
+			}
+			visitedNodes.add(parentNode.id);
+			currentNode = parentNode;
+			parentNode = this.treeService.getParentNode(currentNode.id);
+		}
+
+		return currentNode;
+	}
+
+	onDragStarted() {
+		document.body.classList.add('dragging');
+	}
+
+	onDragEnded() {
+		document.body.classList.remove('dragging');
+	}
+
+	onRegisterDropList(childDropListId: string) {
+		if (!this.dropListIds.includes(childDropListId)) {
+			this.dropListIds.push(childDropListId);
+			this.registerDropList.emit(childDropListId);
+		}
+	}
+}
+
+
+================================================
+File: ui/components/branch-display/mock-data/index.ts
+================================================
+import { TreeNode } from '@shared/interfaces/tree-node.model';
+
+export const mockTreeData: TreeNode = {
+	id: '1',
+	value: 'Root',
+	children: [],
+};
+
+
+================================================
+File: ui/pages/branch-display-container/branch-display-container.component.html
+================================================
+<div class="container-fluid p-4">
+	<h1 class="text-2xl font-bold mb-4">Tree Structure</h1>
+
+	<!-- Loading State -->
+	<div *ngIf="isLoading" class="flex justify-center items-center py-8">
+		<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+	</div>
+
+	<!-- Error State -->
+	<div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+		{{ error }}
+	</div>
+
+	<!-- Tree Component -->
+	<div *ngIf="treeData$ | async as treeData" class="mb-4">
+		<app-tree
+			[node]="treeData"
+			[dropListIds]="dropListIds"
+			(registerDropList)="onRegisterDropList($event)"
+			(treeUpdated)="onTreeUpdate()"
+		></app-tree>
+	</div>
+
+	<!-- Data Representations -->
+	<div *ngIf="!isLoading" class="grid grid-cols-2 gap-4 mt-4">
+		<div>
+			<h2 class="text-lg font-semibold mb-2">Tree Structure:</h2>
+			<pre class="bg-gray-100 p-2 rounded">{{ treeData$ | async | json }}</pre>
+		</div>
+		<div>
+			<h2 class="text-lg font-semibold mb-2">Nested Set Model:</h2>
+			<pre class="bg-gray-100 p-2 rounded">{{ nestedSetData$ | async | json }}</pre>
+		</div>
+	</div>
+
+	<!-- Validation Status -->
+	<div *ngIf="validationErrors.length > 0" class="mt-4 p-4 bg-red-100 rounded">
+		<h3 class="font-semibold text-red-700">Validation Errors:</h3>
+		<ul class="list-disc ml-4">
+			<li *ngFor="let error of validationErrors" class="text-red-600">
+				{{ error }}
+			</li>
+		</ul>
+	</div>
+</div>
+
+
+================================================
+File: ui/pages/branch-display-container/branch-display-container.component.scss
+================================================
+.drop:after {
+	content: '▼';
+	margin-left: 8px;
+}
+
+input:checked + .drop:after {
+	content: '▲';
+}
+
+
+================================================
+File: ui/pages/branch-display-container/branch-display-container.component.ts
+================================================
+// app-tree.component.ts (Parent component)
+import { CommonModule } from '@angular/common';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	OnInit,
+} from '@angular/core';
+import { TreeComponent } from '../../components/branch-display/branch-display.component';
+import { TreeNode } from '@shared/interfaces/tree-node.model';
+import { TreeService } from '@shared/services/tree/tree.service';
+import { mockTreeData } from '../../components/branch-display/mock-data';
+import {
+	NestedSetNode,
+	NestedSetService,
+} from '@shared/services/nested-set/nested-set.service';
+import { NestedSetTreeConverterService } from '@shared/services/nested-set-tree-converter/nested-set-tree-converter.service';
+import { MookService } from '@shared/services/mook/mook.service';
+import { finalize, Observable } from 'rxjs';
+
+@Component({
+	selector: 'app-tree-container',
+	standalone: true,
+	imports: [TreeComponent, CommonModule],
+	templateUrl: './branch-display-container.component.html',
+	styleUrls: ['./branch-display-container.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AppTreeContainer implements OnInit {
+	treeData$: Observable<TreeNode | null>;
+	nestedSetData$: Observable<NestedSetNode[]>;
+	dropListIds: string[] = [];
+	validationErrors: string[] = [];
+	isLoading = false;
+	error: string | null = null;
+
+	constructor(
+		private mookService: MookService,
+		private treeService: TreeService,
+		private nestedSetService: NestedSetService,
+		private nestedSetConverter: NestedSetTreeConverterService,
+		private changeDetectorRef: ChangeDetectorRef
+	) {
+		this.treeData$ = this.nestedSetConverter.treeData$;
+		this.nestedSetData$ = this.nestedSetConverter.nestedSetData$;
+	}
+
+	ngOnInit() {
+		this.loadInitialData();
+	}
+
+	private loadInitialData() {
+		this.isLoading = true;
+		this.error = null;
+
+		this.mookService
+			.getInitialNestedSetData()
+			.pipe(
+				finalize(() => {
+					this.isLoading = false;
+				})
+			)
+			.subscribe({
+				next: (data) => {
+					this.nestedSetConverter.setNestedSetData(data);
+					this.validationErrors =
+						this.nestedSetConverter.validateNestedSet(data);
+					this.registerNodesFromNestedSet(data);
+				},
+				error: (err) => {
+					this.error = 'Failed to load tree data. Please try again later.';
+					console.error('Error loading initial data:', err);
+				},
+			});
+	}
+
+	private registerNodesFromNestedSet(nestedSetData: NestedSetNode[]) {
+		const treeData = this.nestedSetService.convertToTree(nestedSetData);
+		this.registerNodesRecursively(treeData);
+	}
+
+	private registerNodesRecursively(node: TreeNode, parentId?: string) {
+		this.treeService.updateNodeMaps(node, parentId);
+		node.children.forEach((child: TreeNode) => {
+			this.registerNodesRecursively(child, node.id);
+		});
+	}
+
+	onRegisterDropList(id: string) {
+		if (!this.dropListIds.includes(id)) {
+			this.dropListIds = [...this.dropListIds, id];
+		}
+	}
+
+	onTreeUpdate() {
+		// Update validation when tree changes
+		const currentNestedSetData = this.nestedSetConverter.getNestedSetData();
+		this.validationErrors =
+			this.nestedSetConverter.validateNestedSet(currentNestedSetData);
+
+		if (this.validationErrors.length > 0) {
+			console.error('Tree validation errors:', this.validationErrors);
+		}
+
+		// Force change detection
+		this.changeDetectorRef.detectChanges();
+	}
+
+	removeNode(nodeId: string) {
+		this.treeService.deleteNode(nodeId);
+		const currentNestedSetData = this.nestedSetConverter.getNestedSetData();
+		const filteredData = currentNestedSetData.filter(
+			(node) => node.id !== nodeId
+		);
+		this.nestedSetConverter.setNestedSetData(filteredData);
+	}
+}
+

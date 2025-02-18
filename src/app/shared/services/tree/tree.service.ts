@@ -17,23 +17,30 @@ export class TreeService {
 			nodeId: node.id,
 			parentId,
 			nodeValue: node.value,
+			childrenCount: node.children.length,
 		});
 
+		// Clear existing mappings for this node
+		this.nodeMap.delete(node.id);
+		this.parentMap.delete(node.id);
+
+		// Set new mappings
 		this.nodeMap.set(node.id, node);
 		if (parentId) {
 			this.parentMap.set(node.id, parentId);
 		}
 
-		console.log('Current maps after update:', {
+		// Recursively update all children
+		node.children.forEach((child: TreeNode) => {
+			this.updateNodeMaps(child, node.id);
+		});
+
+		console.log('Updated node maps:', {
 			nodeMapSize: this.nodeMap.size,
 			parentMapSize: this.parentMap.size,
 			nodeMapKeys: Array.from(this.nodeMap.keys()),
-			parentMapKeys: Array.from(this.parentMap.keys()),
+			parentMapEntries: Array.from(this.parentMap.entries()),
 		});
-
-		node.children.forEach((child: TreeNode) =>
-			this.updateNodeMaps(child, node.id)
-		);
 	}
 
 	findNodeById(id: string): TreeNode | undefined {
@@ -159,5 +166,34 @@ export class TreeService {
 		});
 
 		return true;
+	}
+	deleteNode(nodeId: string) {
+		// Remove node from nodeMap
+		this.nodeMap.delete(nodeId);
+
+		// Find and remove all children of the node recursively
+		this.findAllChildrenIds(nodeId).forEach((childId) => {
+			this.nodeMap.delete(childId);
+			this.parentMap.delete(childId);
+		});
+
+		// Remove node from parentMap
+		this.parentMap.delete(nodeId);
+	}
+
+	private findAllChildrenIds(nodeId: string): string[] {
+		const node = this.findNodeById(nodeId);
+		if (!node) return [];
+
+		const childrenIds: string[] = [];
+		const processChildren = (children: TreeNode[]) => {
+			children.forEach((child) => {
+				childrenIds.push(child.id);
+				processChildren(child.children);
+			});
+		};
+
+		processChildren(node.children);
+		return childrenIds;
 	}
 }

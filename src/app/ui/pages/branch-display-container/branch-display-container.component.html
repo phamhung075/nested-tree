@@ -1,8 +1,45 @@
 <div class="container-fluid p-4">
 	<h1 class="text-2xl font-bold mb-4">Tree Structure</h1>
-	<div *ngIf="treeData" class="mb-4">
-		<app-tree [node]="treeData" [dropListIds]="dropListIds" (registerDropList)="onRegisterDropList($event)"></app-tree>
+
+	<!-- Loading State -->
+	<div *ngIf="isLoading" class="flex justify-center items-center py-8">
+		<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
 	</div>
-	<div *ngIf="!treeData" class="text-center">No tree data available</div>
-	<pre class="mt-4 bg-gray-100 p-2 rounded">{{ treeData | json }}</pre>
+
+	<!-- Error State -->
+	<div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+		{{ error }}
+	</div>
+
+	<!-- Tree Component -->
+	<div *ngIf="treeData$ | async as treeData" class="mb-4">
+		<app-tree
+			[node]="treeData"
+			[dropListIds]="dropListIds"
+			(registerDropList)="onRegisterDropList($event)"
+			(treeUpdated)="onTreeUpdate()"
+		></app-tree>
+	</div>
+
+	<!-- Data Representations -->
+	<div *ngIf="!isLoading" class="grid grid-cols-2 gap-4 mt-4">
+		<div>
+			<h2 class="text-lg font-semibold mb-2">Tree Structure:</h2>
+			<pre class="bg-gray-100 p-2 rounded">{{ treeData$ | async | json }}</pre>
+		</div>
+		<div>
+			<h2 class="text-lg font-semibold mb-2">Nested Set Model:</h2>
+			<pre class="bg-gray-100 p-2 rounded">{{ nestedSetData$ | async | json }}</pre>
+		</div>
+	</div>
+
+	<!-- Validation Status -->
+	<div *ngIf="validationErrors.length > 0" class="mt-4 p-4 bg-red-100 rounded">
+		<h3 class="font-semibold text-red-700">Validation Errors:</h3>
+		<ul class="list-disc ml-4">
+			<li *ngFor="let error of validationErrors" class="text-red-600">
+				{{ error }}
+			</li>
+		</ul>
+	</div>
 </div>
