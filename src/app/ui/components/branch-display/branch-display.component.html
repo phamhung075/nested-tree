@@ -19,6 +19,24 @@
 			<div class="absolute -left-11 w-19 h-0.5 bg-gray-300"></div>
 		</div>
 
+		<!-- Expand/Collapse Button - Add this new button -->
+		<button
+			*ngIf="node.children.length > 0"
+			(click)="toggleExpand()"
+			class="absolute -left-3 w-4 h-4 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm hover:bg-gray-300"
+			title="{{ isExpanded ? 'Collapse' : 'Expand' }}"
+		>
+			{{ isExpanded ? '▼' : '▶' }}
+		</button>
+
+		<!-- Expand/Collapse Button - Add this new button -->
+		<div
+			*ngIf="node.children.length > 0 && !isExpanded"
+			class="absolute -right-3 w-4 h-4 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm hover:bg-gray-300"
+		>
+			{{ node.children.length }}
+		</div>
+
 		<!-- Node Icon -->
 		<div *ngIf="!isRoot" class="w-5 text-center text-base">
 			<span class="text-yellow-500">{{ node.children.length > 0 ? '📁' : '📄' }}</span>
@@ -81,7 +99,8 @@
 
 	<!-- Children Container -->
 	<div
-		*ngIf="node.children.length > 0"
+		*ngIf="node.children.length > 0 && isExpanded"
+		[@expandCollapse]="isExpanded ? 'expanded' : 'collapsed'"
 		class="relative ml-8"
 		cdkDropList
 		[id]="dropListId"

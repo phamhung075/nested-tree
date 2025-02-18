@@ -58,34 +58,6 @@ export class TreeService {
 		return parentNode;
 	}
 
-	private isDescendant(nodeId: string, targetId: string): boolean {
-		console.log('Checking if descendant:', {
-			nodeId,
-			targetId,
-		});
-
-		let currentNode = this.findNodeById(targetId);
-		let depth = 0;
-
-		while (currentNode && depth < 1000) {
-			console.log('Traversing up the tree:', {
-				currentNodeId: currentNode.id,
-				currentNodeValue: currentNode.value,
-				depth,
-			});
-
-			if (currentNode.id === nodeId) {
-				console.log('Found ancestor match - would create circular reference');
-				return true;
-			}
-			currentNode = this.getParentNode(currentNode.id);
-			depth++;
-		}
-
-		console.log('No circular reference found');
-		return false;
-	}
-
 	moveNode(
 		nodeId: string,
 		targetId: string,
@@ -111,12 +83,6 @@ export class TreeService {
 		const sourceParent = this.getParentNode(nodeId);
 		if (!sourceParent) {
 			console.log('Move failed: Source parent not found');
-			return false;
-		}
-
-		// Check for circular reference
-		if (this.isDescendant(nodeId, targetId)) {
-			console.log('Move failed: Would create circular reference');
 			return false;
 		}
 

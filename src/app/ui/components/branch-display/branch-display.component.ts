@@ -1,5 +1,12 @@
 // tree.component.ts
 import {
+	trigger,
+	state,
+	style,
+	transition,
+	animate,
+} from '@angular/animations';
+import {
 	CdkDrag,
 	CdkDragDrop,
 	CdkDropList,
@@ -27,6 +34,13 @@ import { TreeService } from '@shared/services/tree/tree.service';
 	templateUrl: './branch-display.component.html',
 	styleUrls: ['./branch-display.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	animations: [
+		trigger('expandCollapse', [
+			state('expanded', style({ height: '*', opacity: 1 })),
+			state('collapsed', style({ height: '0', opacity: 0 })),
+			transition('expanded <=> collapsed', animate('200ms ease-in-out')),
+		]),
+	],
 })
 export class TreeComponent implements OnInit {
 	@Input() node!: TreeNode;
@@ -35,6 +49,7 @@ export class TreeComponent implements OnInit {
 	@Input() dropListIds: string[] = [];
 	@Output() onDelete = new EventEmitter<string>();
 	@Output() registerDropList = new EventEmitter<string>();
+	isExpanded: boolean = true;
 
 	dropListId = `drop-list-${Math.random().toString(36).substring(2)}`;
 	private hasBeenInitialized = false;
@@ -44,7 +59,14 @@ export class TreeComponent implements OnInit {
 		private changeDetectionRef: ChangeDetectorRef
 	) {}
 
+	toggleExpand() {
+		this.isExpanded = !this.isExpanded;
+		this.node.isExpanded = this.isExpanded;
+	}
+
 	ngOnInit() {
+		this.isExpanded = this.isRoot ? true : this.node.isExpanded ?? true;
+
 		if (!this.hasBeenInitialized) {
 			this.registerDropList.emit(this.dropListId);
 			console.log('Tree Component Initialized:', {
