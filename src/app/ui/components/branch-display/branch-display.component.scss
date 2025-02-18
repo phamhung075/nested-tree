@@ -1,9 +1,9 @@
 .cdk-drag-preview {
-	@apply opacity-90;
+	@apply opacity-80;
 }
 
 .cdk-drag-placeholder {
-	@apply opacity-50;
+	@apply opacity-30;
 }
 
 .cdk-drop-list-dragging .node-content:not(.cdk-drag-placeholder) {

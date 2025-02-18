@@ -15,7 +15,7 @@
 	>
 		<!-- Vertical and Horizontal Connector Lines -->
 		<div *ngIf="!isRoot" class="absolute -left-8 top-1/2 flex items-center">
-			<div class="absolute -left-6 w-14 h-0.5 bg-gray-300"></div>
+			<div class="absolute -left-11 w-19 h-0.5 bg-gray-300"></div>
 		</div>
 
 		<!-- Node Icon -->
@@ -83,7 +83,7 @@
 		[cdkDropListEnterPredicate]="canDrop"
 	>
 		<!-- Vertical Line for Children -->
-		<div class="absolute left-0 -top-1 w-1 h-full bg-gray-300 z-index-0" [ngClass]="{ 'bg-blue-500': isRoot }"></div>
+		<div class="absolute -left-5 -top-1 w-0.5 h-[calc(100%-1rem)] bg-gray-300 z-index-0" [ngClass]="{ 'bg-blue-500': isRoot }"></div>
 
 		<!-- Child Nodes -->
 		<app-tree
