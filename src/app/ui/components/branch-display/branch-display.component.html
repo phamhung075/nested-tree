@@ -108,6 +108,9 @@
 		[cdkDropListConnectedTo]="dropListIds"
 		(cdkDropListDropped)="drop($event)"
 		[cdkDropListEnterPredicate]="canDrop"
+		[cdkDropListSortingDisabled]="false"
+		[cdkDropListAutoScrollDisabled]="false"
+		[cdkDropListAutoScrollStep]="5"
 	>
 		<!-- Vertical Line for Children -->
 		<div class="absolute -left-5 -top-1 w-0.5 h-[calc(100%-1rem)] bg-gray-300 z-index-0" [ngClass]="{ 'bg-blue-500': isRoot }"></div>

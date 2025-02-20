@@ -19,6 +19,7 @@ import {
 	ChangeDetectorRef,
 	Component,
 	EventEmitter,
+	HostListener,
 	Input,
 	OnInit,
 	Output,
@@ -36,9 +37,23 @@ import { TreeService } from '@shared/services/tree/tree.service';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	animations: [
 		trigger('expandCollapse', [
-			state('expanded', style({ height: '*', opacity: 1 })),
-			state('collapsed', style({ height: '0', opacity: 0 })),
-			transition('expanded <=> collapsed', animate('200ms ease-in-out')),
+			state(
+				'expanded',
+				style({
+					height: '*',
+					opacity: 1,
+					visibility: 'visible', // Add this
+				})
+			),
+			state(
+				'collapsed',
+				style({
+					height: '0',
+					opacity: 0,
+					visibility: 'hidden', // Add this
+				})
+			),
+			transition('expanded <=> collapsed', [animate('200ms ease-in-out')]),
 		]),
 	],
 })
@@ -49,19 +64,27 @@ export class TreeComponent implements OnInit {
 	@Input() dropListIds: string[] = [];
 	@Output() onDelete = new EventEmitter<string>();
 	@Output() registerDropList = new EventEmitter<string>();
-	isExpanded: boolean = true;
+	isExpanded = true;
 
 	dropListId = `drop-list-${Math.random().toString(36).substring(2)}`;
 	private hasBeenInitialized = false;
 
+	dragConfig = {
+		dragStartThreshold: 5,
+		pointerDirectionChangeThreshold: 5,
+		touchStartLongPress: true,
+		touchStartDelay: 100,
+	};
+
 	constructor(
 		private treeService: TreeService,
-		private changeDetectionRef: ChangeDetectorRef
+		private changeDetectorRef: ChangeDetectorRef
 	) {}
 
 	toggleExpand() {
 		this.isExpanded = !this.isExpanded;
 		this.node.isExpanded = this.isExpanded;
+		this.changeDetectorRef.detectChanges(); // Force change detection
 	}
 
 	ngOnInit() {
@@ -69,6 +92,7 @@ export class TreeComponent implements OnInit {
 
 		if (!this.hasBeenInitialized) {
 			this.registerDropList.emit(this.dropListId);
+			this.hasBeenInitialized = true;
 			console.log('Tree Component Initialized:', {
 				nodeId: this.node.id,
 				value: this.node.value,
@@ -101,29 +125,34 @@ export class TreeComponent implements OnInit {
 	}
 
 	drop(event: CdkDragDrop<TreeNode[]>) {
-		const draggedNode = event.item.data as TreeNode;
+		// Prevent default on the original event if it exists
+		if (event.event) {
+			event.event.preventDefault();
+			event.event.stopPropagation();
+		}
 
 		if (event.previousContainer === event.container) {
-			// Moving within the same container
 			moveItemInArray(
 				event.container.data,
 				event.previousIndex,
 				event.currentIndex
 			);
 		} else {
-			// Moving to a different container
 			const success = this.treeService.moveNode(
-				draggedNode.id,
+				event.item.data.id,
 				this.node.id,
 				'inside',
-				event.currentIndex // Pass the current index for position-based insertion
+				event.currentIndex
 			);
 
 			if (success) {
-				console.log('Node moved successfully to:', {
-					targetNode: this.node.value,
-					position: event.currentIndex,
-				});
+				// Force update after successful drop
+				this.changeDetectorRef.detectChanges();
+
+				// Add haptic feedback if available
+				if (window.navigator && window.navigator.vibrate) {
+					window.navigator.vibrate(50);
+				}
 			}
 		}
 	}
@@ -198,12 +227,54 @@ export class TreeComponent implements OnInit {
 		this.onDelete.emit(this.node.id);
 	}
 
+	@HostListener('touchstart', ['$event'])
+	onTouchStart(event: TouchEvent) {
+		if (this.isRoot) return;
+
+		// Store initial touch position
+		const touch = event.touches[0];
+		const initialTouch = { x: touch.clientX, y: touch.clientY };
+		let hasMoved = false;
+
+		const touchMoveHandler = (moveEvent: TouchEvent) => {
+			if (!hasMoved) {
+				const currentTouch = moveEvent.touches[0];
+				const deltaX = Math.abs(currentTouch.clientX - initialTouch.x);
+				const deltaY = Math.abs(currentTouch.clientY - initialTouch.y);
+
+				// If horizontal movement is significant, start drag
+				if (deltaX > 10 && deltaX > deltaY) {
+					moveEvent.preventDefault();
+					hasMoved = true;
+					this.onDragStarted();
+				}
+			}
+		};
+
+		const touchEndHandler = () => {
+			if (hasMoved) {
+				this.onDragEnded();
+			}
+			document.removeEventListener('touchmove', touchMoveHandler);
+			document.removeEventListener('touchend', touchEndHandler);
+		};
+
+		document.addEventListener('touchmove', touchMoveHandler, {
+			passive: false,
+		});
+		document.addEventListener('touchend', touchEndHandler);
+	}
+
 	onDragStarted() {
+		document.body.style.overflow = 'hidden'; // Prevent scrolling while dragging
 		document.body.classList.add('dragging');
 	}
 
 	onDragEnded() {
+		document.body.style.overflow = ''; // Restore scrolling
 		document.body.classList.remove('dragging');
+		// Force change detection
+		this.changeDetectorRef.detectChanges();
 	}
 
 	onRegisterDropList(childDropListId: string) {

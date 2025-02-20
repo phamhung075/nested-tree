@@ -1,11 +1,39 @@
+:host {
+	touch-action: pan-y;
+	-webkit-touch-callout: none;
+	-webkit-tap-highlight-color: transparent;
+	display: block;
+}
+
+.cdk-drag {
+	touch-action: none;
+	-webkit-user-drag: none;
+	-webkit-tap-highlight-color: transparent;
+
+	&:active {
+		cursor: grabbing;
+	}
+}
+
+.tree-container {
+	touch-action: pan-y pinch-zoom;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+// Improve touch feedback
+.cdk-drag-handle {
+	&:active {
+		background-color: rgba(0, 0, 0, 0.15);
+		transform: scale(0.95);
+	}
+}
+
+// Better visual feedback during drag
 .cdk-drag-preview {
-	@apply opacity-80;
-}
-
-.cdk-drag-placeholder {
-	@apply opacity-30;
-}
-
-.cdk-drop-list-dragging .node-content:not(.cdk-drag-placeholder) {
-	@apply transition-all duration-200;
+	z-index: 1000;
+	pointer-events: none;
+	touch-action: none;
+	will-change: transform;
+	transform-origin: 50% 50%;
 }
