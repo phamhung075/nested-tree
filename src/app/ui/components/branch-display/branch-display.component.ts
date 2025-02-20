@@ -72,11 +72,7 @@ export class TreeComponent implements OnInit {
 	dropListId = `drop-list-${Math.random().toString(36).substring(2)}`;
 	private hasBeenInitialized = false;
 	@ViewChild('scrollContainer') scrollContainer!: ElementRef;
-	private isDraggingScroll = false;
-	private startX = 0;
-	private startY = 0;
-	private startScrollX = 0;
-	private startScrollY = 0;
+
 	dragConfig = {
 		dragStartThreshold: 5,
 		pointerDirectionChangeThreshold: 5,
@@ -277,117 +273,27 @@ export class TreeComponent implements OnInit {
 		document.addEventListener('touchend', touchEndHandler);
 	}
 
-	startScrollDrag(event: MouseEvent) {
-		// Ignore if clicking on interactive elements
-		if (
-			event.target instanceof HTMLButtonElement ||
-			event.target instanceof HTMLInputElement ||
-			(event.target as HTMLElement).classList.contains('cdk-drag-handle')
-		) {
-			return;
-		}
-
-		this.isDraggingScroll = true;
-		this.startY = event.pageX;
-		this.startX = event.pageY;
-		this.startScrollX = window.scrollX;
-		this.startScrollY = window.scrollY;
-
-		document.body.classList.add('dragging-scroll');
-
-		// Add document-level event listeners
-		const moveHandler = (e: MouseEvent) => this.handleScrollDrag(e);
-		const upHandler = () => {
-			this.isDraggingScroll = false;
-			document.body.classList.remove('dragging-scroll');
-			document.removeEventListener('mousemove', moveHandler);
-			document.removeEventListener('mouseup', upHandler);
-		};
-
-		document.addEventListener('mousemove', moveHandler);
-		document.addEventListener('mouseup', upHandler);
-	}
-
-	// Handle touch drag for scrolling
-	startTouchScrollDrag(event: TouchEvent) {
-		// Ignore if touching interactive elements
-		if (
-			event.target instanceof HTMLButtonElement ||
-			event.target instanceof HTMLInputElement ||
-			(event.target as HTMLElement).classList.contains('cdk-drag-handle')
-		) {
-			return;
-		}
-
-		this.isDraggingScroll = true;
-		this.startX = event.touches[0].pageX;
-		this.startY = event.touches[0].pageY;
-		this.startScrollX = window.scrollX;
-		this.startScrollY = window.scrollY;
-
-		document.body.classList.add('dragging-scroll');
-
-		// Add document-level event listeners
-		const moveHandler = (e: TouchEvent) => this.handleTouchScrollDrag(e);
-		const endHandler = () => {
-			this.isDraggingScroll = false;
-			document.body.classList.remove('dragging-scroll');
-			document.removeEventListener('touchmove', moveHandler);
-			document.removeEventListener('touchend', endHandler);
-		};
-
-		document.addEventListener('touchmove', moveHandler);
-		document.addEventListener('touchend', endHandler);
-	}
-
-	private handleScrollDrag(event: MouseEvent) {
-		if (!this.isDraggingScroll) return;
-
-		const deltaX = event.pageX - this.startX;
-		const deltaY = event.pageY - this.startY;
-
-		// Apply horizontal scroll
-		window.scrollTo(this.startScrollX - deltaX, window.scrollY);
-		// Apply vertical scroll
-		window.scrollTo(window.scrollX, this.startScrollY - deltaY);
-	}
-
-	private handleTouchScrollDrag(event: TouchEvent) {
-		if (!this.isDraggingScroll) return;
-
-		const deltaX = event.touches[0].pageX - this.startX;
-		const deltaY = event.touches[0].pageY - this.startY;
-
-		// Apply horizontal scroll
-		window.scrollTo(this.startScrollX - deltaX, window.scrollY);
-		// Apply vertical scroll
-		window.scrollTo(window.scrollX, this.startScrollY - deltaY);
-	}
-
 	private setupAutoScroll() {
-		const scrollThreshold = 50;
+		const scrollThreshold = 100; // Fixed pixel value
 		const scrollSpeed = 10;
 		let scrollInterval: any;
 
 		const handleScroll = (e: MouseEvent | Touch) => {
-			const containerRect =
-				this.scrollContainer.nativeElement.getBoundingClientRect();
-			const mouseX = e instanceof MouseEvent ? e.clientX : e.clientX;
 			const mouseY = e instanceof MouseEvent ? e.clientY : e.clientY;
+			const viewportHeight = window.innerHeight;
 
-			// Clear existing interval
 			if (scrollInterval) {
 				clearInterval(scrollInterval);
 			}
 
-			// Check if we're near the edges of the container
-			if (mouseY > containerRect.bottom - scrollThreshold) {
-				// Scroll down
+			// For bottom scroll, check against viewport height
+			if (mouseY > viewportHeight - scrollThreshold) {
 				scrollInterval = setInterval(() => {
 					window.scrollBy(0, scrollSpeed);
 				}, 16);
-			} else if (mouseY < containerRect.top + scrollThreshold) {
-				// Scroll up
+			}
+			// For top scroll, also check against viewport
+			else if (mouseY < scrollThreshold) {
 				scrollInterval = setInterval(() => {
 					window.scrollBy(0, -scrollSpeed);
 				}, 16);
