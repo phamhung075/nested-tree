@@ -2,7 +2,7 @@
 <div class="relative pl-8 mt-1 ml-6" [class.ml-0]="isRoot" [class.pl-3]="isRoot">
 	<!-- Node Content -->
 	<div
-		class="flex items-center gap-2 relative cursor-move bg-white rounded p-1.5 transition-all duration-200 w-fit"
+		class="flex items-center gap-2 relative cursor-move bg-white rounded p-1.5 transition-all duration-200 w-fit !cursor-default"
 		cdkDrag
 		[cdkDragDisabled]="isRoot"
 		[cdkDragData]="node"
@@ -88,7 +88,7 @@
 			<!-- Drag Handle -->
 			<button
 				*ngIf="!isRoot"
-				class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-sm hover:bg-gray-300 cursor-move"
+				class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-sm hover:bg-gray-300 !cursor-move"
 				cdkDragHandle
 				title="Drag to reorder"
 			>
