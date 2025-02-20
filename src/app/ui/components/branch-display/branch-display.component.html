@@ -1,5 +1,5 @@
 <!-- Tree node template -->
-<div class="relative pl-8 mt-1 ml-6" [class.ml-0]="isRoot" [class.pl-3]="isRoot">
+<div class="relative pl-8 mt-1 ml-6 w-fit" [class.ml-0]="isRoot" [class.pl-3]="isRoot">
 	<!-- Node Content -->
 	<div
 		class="flex items-center gap-2 relative cursor-move bg-white rounded p-1.5 transition-all duration-200 w-fit !cursor-default"
@@ -88,7 +88,7 @@
 			<!-- Drag Handle -->
 			<button
 				*ngIf="!isRoot"
-				class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-sm hover:bg-gray-300 !cursor-move"
+				class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-sm hover:bg-gray-300 !cursor-move z-100"
 				cdkDragHandle
 				title="Drag to reorder"
 			>
@@ -113,7 +113,7 @@
 		[cdkDropListAutoScrollStep]="5"
 	>
 		<!-- Vertical Line for Children -->
-		<div class="absolute -left-5 -top-1 w-0.5 h-[calc(100%-1rem)] bg-gray-300 z-index-0" [ngClass]="{ 'bg-blue-500': isRoot }"></div>
+		<div class="absolute -left-5 -top-1 w-0.5 h-[calc(100%-1rem)] bg-gray-300 z-0" [ngClass]="{ 'bg-blue-500': isRoot }"></div>
 
 		<!-- Child Nodes -->
 		<app-tree

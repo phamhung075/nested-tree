@@ -1,5 +1,5 @@
 :host {
-	touch-action: pan-y;
+	touch-action: pan-y pan-x pinch-zoom;
 	-webkit-touch-callout: none;
 	-webkit-tap-highlight-color: transparent;
 	display: block;
@@ -13,12 +13,6 @@
 	&:active {
 		cursor: grabbing;
 	}
-}
-
-.tree-container {
-	touch-action: pan-y pinch-zoom;
-	overflow-y: auto;
-	-webkit-overflow-scrolling: touch;
 }
 
 // Improve touch feedback

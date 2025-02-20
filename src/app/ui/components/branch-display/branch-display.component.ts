@@ -18,11 +18,13 @@ import {
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
 	Component,
+	ElementRef,
 	EventEmitter,
 	HostListener,
 	Input,
 	OnInit,
 	Output,
+	ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TreeNode } from '@shared/interfaces/tree-node.model';
@@ -65,10 +67,16 @@ export class TreeComponent implements OnInit {
 	@Output() onDelete = new EventEmitter<string>();
 	@Output() registerDropList = new EventEmitter<string>();
 	isExpanded = true;
+	@Input() level = 0; // Track nesting level
 
 	dropListId = `drop-list-${Math.random().toString(36).substring(2)}`;
 	private hasBeenInitialized = false;
-
+	@ViewChild('scrollContainer') scrollContainer!: ElementRef;
+	private isDraggingScroll = false;
+	private startX = 0;
+	private startY = 0;
+	private startScrollX = 0;
+	private startScrollY = 0;
 	dragConfig = {
 		dragStartThreshold: 5,
 		pointerDirectionChangeThreshold: 5,
@@ -100,6 +108,10 @@ export class TreeComponent implements OnInit {
 			});
 			this.hasBeenInitialized = true;
 		}
+	}
+
+	getChildLevel(): number {
+		return this.level + 1;
 	}
 
 	canDrop = (drag: CdkDrag, drop: CdkDropList) => {
@@ -265,15 +277,154 @@ export class TreeComponent implements OnInit {
 		document.addEventListener('touchend', touchEndHandler);
 	}
 
-	onDragStarted() {
-		document.body.style.overflow = 'hidden'; // Prevent scrolling while dragging
-		document.body.classList.add('dragging');
+	startScrollDrag(event: MouseEvent) {
+		// Ignore if clicking on interactive elements
+		if (
+			event.target instanceof HTMLButtonElement ||
+			event.target instanceof HTMLInputElement ||
+			(event.target as HTMLElement).classList.contains('cdk-drag-handle')
+		) {
+			return;
+		}
+
+		this.isDraggingScroll = true;
+		this.startY = event.pageX;
+		this.startX = event.pageY;
+		this.startScrollX = window.scrollX;
+		this.startScrollY = window.scrollY;
+
+		document.body.classList.add('dragging-scroll');
+
+		// Add document-level event listeners
+		const moveHandler = (e: MouseEvent) => this.handleScrollDrag(e);
+		const upHandler = () => {
+			this.isDraggingScroll = false;
+			document.body.classList.remove('dragging-scroll');
+			document.removeEventListener('mousemove', moveHandler);
+			document.removeEventListener('mouseup', upHandler);
+		};
+
+		document.addEventListener('mousemove', moveHandler);
+		document.addEventListener('mouseup', upHandler);
 	}
 
+	// Handle touch drag for scrolling
+	startTouchScrollDrag(event: TouchEvent) {
+		// Ignore if touching interactive elements
+		if (
+			event.target instanceof HTMLButtonElement ||
+			event.target instanceof HTMLInputElement ||
+			(event.target as HTMLElement).classList.contains('cdk-drag-handle')
+		) {
+			return;
+		}
+
+		this.isDraggingScroll = true;
+		this.startX = event.touches[0].pageX;
+		this.startY = event.touches[0].pageY;
+		this.startScrollX = window.scrollX;
+		this.startScrollY = window.scrollY;
+
+		document.body.classList.add('dragging-scroll');
+
+		// Add document-level event listeners
+		const moveHandler = (e: TouchEvent) => this.handleTouchScrollDrag(e);
+		const endHandler = () => {
+			this.isDraggingScroll = false;
+			document.body.classList.remove('dragging-scroll');
+			document.removeEventListener('touchmove', moveHandler);
+			document.removeEventListener('touchend', endHandler);
+		};
+
+		document.addEventListener('touchmove', moveHandler);
+		document.addEventListener('touchend', endHandler);
+	}
+
+	private handleScrollDrag(event: MouseEvent) {
+		if (!this.isDraggingScroll) return;
+
+		const deltaX = event.pageX - this.startX;
+		const deltaY = event.pageY - this.startY;
+
+		// Apply horizontal scroll
+		window.scrollTo(this.startScrollX - deltaX, window.scrollY);
+		// Apply vertical scroll
+		window.scrollTo(window.scrollX, this.startScrollY - deltaY);
+	}
+
+	private handleTouchScrollDrag(event: TouchEvent) {
+		if (!this.isDraggingScroll) return;
+
+		const deltaX = event.touches[0].pageX - this.startX;
+		const deltaY = event.touches[0].pageY - this.startY;
+
+		// Apply horizontal scroll
+		window.scrollTo(this.startScrollX - deltaX, window.scrollY);
+		// Apply vertical scroll
+		window.scrollTo(window.scrollX, this.startScrollY - deltaY);
+	}
+
+	private setupAutoScroll() {
+		const scrollThreshold = 50;
+		const scrollSpeed = 10;
+		let scrollInterval: any;
+
+		const handleScroll = (e: MouseEvent | Touch) => {
+			const containerRect =
+				this.scrollContainer.nativeElement.getBoundingClientRect();
+			const mouseX = e instanceof MouseEvent ? e.clientX : e.clientX;
+			const mouseY = e instanceof MouseEvent ? e.clientY : e.clientY;
+
+			// Clear existing interval
+			if (scrollInterval) {
+				clearInterval(scrollInterval);
+			}
+
+			// Check if we're near the edges of the container
+			if (mouseY > containerRect.bottom - scrollThreshold) {
+				// Scroll down
+				scrollInterval = setInterval(() => {
+					window.scrollBy(0, scrollSpeed);
+				}, 16);
+			} else if (mouseY < containerRect.top + scrollThreshold) {
+				// Scroll up
+				scrollInterval = setInterval(() => {
+					window.scrollBy(0, -scrollSpeed);
+				}, 16);
+			}
+		};
+
+		const cleanup = () => {
+			if (scrollInterval) {
+				clearInterval(scrollInterval);
+			}
+			document.removeEventListener('mousemove', mouseHandler);
+			document.removeEventListener('touchmove', touchHandler);
+		};
+
+		const mouseHandler = (e: MouseEvent) => handleScroll(e);
+		const touchHandler = (e: TouchEvent) => {
+			if (e.touches.length > 0) {
+				handleScroll(e.touches[0]);
+			}
+		};
+
+		document.addEventListener('mousemove', mouseHandler);
+		document.addEventListener('touchmove', touchHandler);
+		document.addEventListener('mouseup', cleanup, { once: true });
+		document.addEventListener('touchend', cleanup, { once: true });
+	}
+
+	onDragStarted() {
+		document.body.style.overflow = 'auto'; // Allow scrolling
+		document.body.classList.add('dragging');
+		this.setupAutoScroll();
+	}
+
+	// Update drag ended handler
 	onDragEnded() {
-		document.body.style.overflow = ''; // Restore scrolling
+		document.body.style.overflow = '';
 		document.body.classList.remove('dragging');
-		// Force change detection
 		this.changeDetectorRef.detectChanges();
 	}
 
