@@ -101,11 +101,11 @@ export class TreeComponent implements OnInit {
 		if (!this.hasBeenInitialized) {
 			this.registerDropList.emit(this.dropListId);
 			this.hasBeenInitialized = true;
-			console.log('Tree Component Initialized:', {
-				nodeId: this.node.id,
-				value: this.node.value,
-				children: this.node.children.length,
-			});
+			// console.log('Tree Component Initialized:', {
+			// 	nodeId: this.node.id,
+			// 	value: this.node.value,
+			// 	children: this.node.children.length,
+			// });
 			this.hasBeenInitialized = true;
 		}
 	}
@@ -172,13 +172,13 @@ export class TreeComponent implements OnInit {
 	moveUpLevel() {
 		const currentParent = this.treeService.getParentNode(this.node.id);
 		if (!currentParent) {
-			console.log('Cannot move up: No parent found');
+			// console.log('Cannot move up: No parent found');
 			return;
 		}
 
 		const grandParent = this.treeService.getParentNode(currentParent.id);
 		if (!grandParent) {
-			console.log('Cannot move up: No grandparent found');
+			// console.log('Cannot move up: No grandparent found');
 			return;
 		}
 
@@ -188,7 +188,7 @@ export class TreeComponent implements OnInit {
 		);
 
 		if (parentIndex === -1) {
-			console.log('Cannot move up: Parent index not found');
+			// console.log('Cannot move up: Parent index not found');
 			return;
 		}
 
@@ -201,11 +201,11 @@ export class TreeComponent implements OnInit {
 		);
 
 		if (success) {
-			console.log('Node moved up successfully:', {
-				nodeId: this.node.id,
-				newParentId: grandParent.id,
-				position: parentIndex + 1,
-			});
+			// console.log('Node moved up successfully:', {
+			// 	nodeId: this.node.id,
+			// 	newParentId: grandParent.id,
+			// 	position: parentIndex + 1,
+			// });
 		}
 	}
 
@@ -217,11 +217,11 @@ export class TreeComponent implements OnInit {
 		if (index !== -1) {
 			const removedNode = this.node.children[index];
 			this.node.children.splice(index, 1);
-			console.log('Removed child:', {
-				childId,
-				parentId: this.node.id,
-				parentValue: this.node.value,
-			});
+			// console.log('Removed child:', {
+			// 	childId,
+			// 	parentId: this.node.id,
+			// 	parentValue: this.node.value,
+			// });
 		}
 	}
 

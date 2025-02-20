@@ -30,13 +30,13 @@ export class AppTreeContainer implements OnInit {
 	ngOnInit() {
 		// Register all nodes in the tree with the service
 		this.registerNodesRecursively(this.treeData);
-		console.log('Tree Container Initialized');
+		// console.log('Tree Container Initialized');
 	}
 
 	private registerNodesRecursively(node: TreeNode, parentId?: string) {
 		// Register the current node
 		this.treeService.updateNodeMaps(node, parentId);
-		console.log('Registered node:', { nodeId: node.id, parentId });
+		// console.log('Registered node:', { nodeId: node.id, parentId });
 
 		// Register all children
 		node.children.forEach((child: TreeNode) => {

@@ -1,8 +1,8 @@
-<div class="container-fluid p-4">
+<div class="container-fluid p-4 mt-10 min-h-50">
 	<h1 class="text-2xl font-bold mb-4">Tree Structure</h1>
 	<div *ngIf="treeData" class="mb-4">
 		<app-tree [node]="treeData" [dropListIds]="dropListIds"></app-tree>
 	</div>
 	<div *ngIf="!treeData" class="text-center">No tree data available</div>
-	<pre class="mt-4 bg-gray-100 p-2 rounded">{{ treeData | json }}</pre>
+	<pre class="mt-4 bg-gray-100 p-2 rounded mt-50">{{ treeData | json }}</pre>
 </div>
